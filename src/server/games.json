@@ -1,0 +1,26 @@
+[
+    {
+        "max_players": 2,
+        "chip_count": 10000,
+        "name": "Two Person Showdown",
+        "mode": 0,
+        "small_blind": 0,
+        "big_blind": 0
+    },
+    {
+        "max_players": 6,
+        "chip_count":  50000,
+        "name": "Table 2",
+        "mode": 1,
+        "small_blind": 0,
+        "big_blind": 0
+    },
+    {
+        "max_players": 8,
+        "chip_count": 1000000,
+        "name": "Big Table",
+        "mode": 1,
+        "small_blind": 0,
+        "big_blind": 0
+    }
+]
