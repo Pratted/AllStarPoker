@@ -325,8 +325,8 @@
    <widget class="QLabel" name="Player3Card2">
     <property name="geometry">
      <rect>
-      <x>860</x>
-      <y>430</y>
+      <x>830</x>
+      <y>440</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -341,8 +341,8 @@
    <widget class="QLabel" name="Player3Card1">
     <property name="geometry">
      <rect>
-      <x>820</x>
-      <y>430</y>
+      <x>790</x>
+      <y>440</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -357,8 +357,8 @@
    <widget class="QLabel" name="Player2Card2">
     <property name="geometry">
      <rect>
-      <x>1110</x>
-      <y>340</y>
+      <x>1100</x>
+      <y>350</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -373,8 +373,8 @@
    <widget class="QLabel" name="Player2Card1">
     <property name="geometry">
      <rect>
-      <x>1070</x>
-      <y>340</y>
+      <x>1060</x>
+      <y>350</y>
       <width>51</width>
       <height>63</height>
      </rect>
@@ -389,8 +389,8 @@
    <widget class="QLabel" name="Player1Card2">
     <property name="geometry">
      <rect>
-      <x>1130</x>
-      <y>150</y>
+      <x>1120</x>
+      <y>160</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -405,8 +405,8 @@
    <widget class="QLabel" name="Player1Card1">
     <property name="geometry">
      <rect>
-      <x>1090</x>
-      <y>150</y>
+      <x>1080</x>
+      <y>160</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -421,8 +421,8 @@
    <widget class="QLabel" name="Player0Card2">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>0</y>
+      <x>880</x>
+      <y>10</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -437,8 +437,8 @@
    <widget class="QLabel" name="Player0Card1">
     <property name="geometry">
      <rect>
-      <x>850</x>
-      <y>0</y>
+      <x>840</x>
+      <y>10</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -454,7 +454,7 @@
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>0</y>
+      <y>10</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -470,7 +470,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>0</y>
+      <y>10</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -486,7 +486,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>140</y>
+      <y>150</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -502,7 +502,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>140</y>
+      <y>150</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -518,7 +518,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>340</y>
+      <y>350</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -534,7 +534,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>340</y>
+      <y>350</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -550,7 +550,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>430</y>
+      <y>440</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -566,7 +566,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>430</y>
+      <y>440</y>
       <width>44</width>
       <height>63</height>
      </rect>
@@ -803,7 +803,7 @@
    <widget class="QLabel" name="Player3Stack7">
     <property name="geometry">
      <rect>
-      <x>810</x>
+      <x>820</x>
       <y>420</y>
       <width>20</width>
       <height>24</height>
@@ -822,7 +822,7 @@
    <widget class="QLabel" name="Player3Stack4">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>760</x>
       <y>420</y>
       <width>20</width>
       <height>24</height>
@@ -841,7 +841,7 @@
    <widget class="QLabel" name="Player3Stack0">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>760</x>
       <y>440</y>
       <width>20</width>
       <height>24</height>
@@ -860,7 +860,7 @@
    <widget class="QLabel" name="Player3Stack6">
     <property name="geometry">
      <rect>
-      <x>790</x>
+      <x>800</x>
       <y>420</y>
       <width>20</width>
       <height>24</height>
@@ -879,7 +879,7 @@
    <widget class="QLabel" name="Player3Stack1">
     <property name="geometry">
      <rect>
-      <x>760</x>
+      <x>780</x>
       <y>440</y>
       <width>20</width>
       <height>24</height>
@@ -898,7 +898,7 @@
    <widget class="QLabel" name="Player3Stack5">
     <property name="geometry">
      <rect>
-      <x>770</x>
+      <x>780</x>
       <y>420</y>
       <width>20</width>
       <height>24</height>
@@ -917,7 +917,7 @@
    <widget class="QLabel" name="Player3Stack3">
     <property name="geometry">
      <rect>
-      <x>800</x>
+      <x>820</x>
       <y>440</y>
       <width>20</width>
       <height>24</height>
@@ -936,7 +936,7 @@
    <widget class="QLabel" name="Player3Stack2">
     <property name="geometry">
      <rect>
-      <x>780</x>
+      <x>800</x>
       <y>440</y>
       <width>20</width>
       <height>24</height>
@@ -2684,134 +2684,6 @@ color: white</string>
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="player1_blind">
-    <property name="geometry">
-     <rect>
-      <x>850</x>
-      <y>180</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player2_blind">
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>290</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player3_blind">
-    <property name="geometry">
-     <rect>
-      <x>900</x>
-      <y>410</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player4_blind">
-    <property name="geometry">
-     <rect>
-      <x>710</x>
-      <y>430</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player5_blind">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>410</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player6_blind">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>390</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player7_blind">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>290</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLabel" name="player8_blind">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>170</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Documents/big_blind.png</pixmap>
-    </property>
-   </widget>
    <zorder>buttonCancel</zorder>
    <zorder>buttonSubmit</zorder>
    <zorder>inputBet</zorder>
@@ -2952,14 +2824,6 @@ color: white</string>
    <zorder>messageBox</zorder>
    <zorder>messageBrowser</zorder>
    <zorder>labelPot</zorder>
-   <zorder>player1_blind</zorder>
-   <zorder>player2_blind</zorder>
-   <zorder>player3_blind</zorder>
-   <zorder>player4_blind</zorder>
-   <zorder>player5_blind</zorder>
-   <zorder>player6_blind</zorder>
-   <zorder>player7_blind</zorder>
-   <zorder>player8_blind</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -2967,7 +2831,7 @@ color: white</string>
      <x>0</x>
      <y>0</y>
      <width>1569</width>
-     <height>20</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">

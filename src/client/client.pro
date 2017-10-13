@@ -40,15 +40,16 @@ HEADERS += \
         mainmenu.h \
     ../packet.h \
     ../globals.h \
-    ../community.h \
     client.h \
     loginwindow.h \
     account.h \
     game.h \
     seat.h \
     countdowntimer.h \
-    ../player.h \
-    card.h
+    card.h \
+    card.h \
+    community.h \
+    player.h
 
 FORMS += \
         mainmenu.ui \

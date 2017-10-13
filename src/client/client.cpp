@@ -10,9 +10,9 @@
 #include <QSqlDatabase>
 #include <QImage>
 
-#include "../player.h"
 #include "../packet.h"
 
+#include "player.h"
 #include "client.h"
 #include "game.h"
 #include "loginwindow.h"

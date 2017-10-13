@@ -1,21 +1,13 @@
 #include <QImage>
 #include <QPixmap>
 
-#include "../player.h"
+#include "player.h"
 #include "seat.h"
 #include "countdowntimer.h"
 
 //#include "player.h"
 
-Seat::Seat(int id) :
-    id(id),
-    chipStacks(8)
-{
-    for (auto &stack : chipStacks) {
-        //stack.reset(new QLabel(nullptr));
-        //stack->hide();
-    }
-}
+Seat::Seat(int id) :id(id), chipStacks(8) {}
 
 void Seat::clear() {
     placeholder->hide();
@@ -42,7 +34,6 @@ void Seat::display() {
     this->buttonSitInSeat->setVisible(false);
     this->placeholder->show();
 
-    //this->playerName->setText(player->getName());
     this->playerName->raise();
     this->playerName->show();
 
@@ -50,21 +41,17 @@ void Seat::display() {
 }
 
 
+//Place a player in this seat.
+//Update player's pointers to point to seat's labels.
 void Seat::seat(Player *player){
     qDebug() << "Seating player...\n";
     this->player = player;
     qDebug() << "Player: " << player;
 
-    //player->labelChipCount = this->chipCount;
-
-    //player->card1.label = this->labelCard1;
-    //player->card2.label = this->labelCard2;
-
     player->seat = this;
 
     player->seat->playerName->setText(player->getName());
-
-
+    player->timer = this->timer;
 
     qDebug() << "About to show seat.\n";
     this->display();
@@ -74,50 +61,5 @@ void Seat::seat(Player *player){
     player->card2.setLabel(this->labelCard2);
 
     qDebug() << "player " << player->getId() << ". labelCard1 " << player->card1.img();
-    //player->card2.setLabel(this->labelCard2);
 }
 
-void Seat::addPlayer(JsonString json_player){
-    //player = new Player(json_player);
-
-
-    /*
-    player = new Player(this->id);
-
-    player->labelChipCount = this->chipCount;
-
-    player->card1.label = this->labelCard1;
-    player->card2.label = this->labelCard2;
-
-    this->isTaken = true;
-
-
-    //seat.player->seat = &seat;
-    //seat.player->card1.image = seat.labelCard1;
-    //seat.player->card2.image = seat.labelCard2;
-    //seat.player->chipCount = settings.chipStartCount;
-    //player->labelChipCount = seat.chipCount;
-
-    this->display();
-    */
-}
-
-void Seat::addPlayer(Player* player){
-    /*
-    player->labelChipCount = this->chipCount;
-
-    player->card1.label = this->labelCard1;
-    player->card2.label = this->labelCard2;
-
-    this->isTaken = true;
-
-
-    //seat.player->seat = &seat;
-    //seat.player->card1.image = seat.labelCard1;
-    //seat.player->card2.image = seat.labelCard2;
-    //seat.player->chipCount = settings.chipStartCount;
-    //player->labelChipCount = seat.chipCount;
-
-    this->display();
-    */
-}

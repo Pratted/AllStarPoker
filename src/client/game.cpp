@@ -5,8 +5,8 @@
 #include <QInputDialog>
 
 #include "../packet.h"
-#include "../player.h"
-#include "../community.h"
+#include "player.h"
+#include "community.h"
 
 #include "game.h"
 #include "seat.h"
@@ -155,9 +155,6 @@ void Game::setPlayerTurn(QString payload){
 bool Game::setup(){
     bool ok;
 
-    //QString name = promptName();
-
-    //if(name.isEmpty()) return false;
     QString name = QInputDialog::getText(this, "Enter your name", tr("Enter your name"), QLineEdit::Normal, "", &ok);
     while(name.isEmpty()){
         name = QInputDialog::getText(this, "Enter your name", tr("Enter your name"), QLineEdit::Normal, "", &ok);
@@ -302,6 +299,15 @@ void Game::setBackground() {
     ui->placeholder3->hide();
     ui->placeholder2->hide();
     ui->placeholder1->hide();
+
+    ui->player1_blind->hide();
+    ui->player2_blind->hide();
+    ui->player3_blind->hide();
+    ui->player4_blind->hide();
+    ui->player5_blind->hide();
+    ui->player6_blind->hide();
+    ui->player7_blind->hide();
+    ui->player8_blind->hide();
 
     ui->labelPotHolder->hide();
     ui->labelPot->setText("");

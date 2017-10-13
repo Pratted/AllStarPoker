@@ -47,6 +47,9 @@ public slots:
 
     Player* findButton();
     Player* findNextPlayer(Player* current_player);
+    Player* findPlayerById(int id);
+
+    bool isRoundFinshed();
 
     static QVector<Card> newDeck();
 signals:
@@ -65,6 +68,8 @@ private:
     Player* small_blind = nullptr;
     Player* big_blind = nullptr;
     Player* lead_better = nullptr;
+    Player* prev_lead_better;
+    Player* current_player;
 
     //std::vector<Player*> &players; //reference to the game's players.
     //std::map<int, bool> &seats; //map to check if seats are available.

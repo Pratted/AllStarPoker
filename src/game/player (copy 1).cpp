@@ -1,7 +1,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "player.h"
+#include "../player.h"
 
 Player::Player(int handle, int id, QString name, QObject *parent) : QObject(parent), handle(handle), id(id), name(name), move(BET)
 {

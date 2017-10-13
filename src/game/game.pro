@@ -38,4 +38,6 @@ HEADERS += \
     ../player.h \
     ../globals.h \
     ../player.h \
-    card.h
+    card.h \
+    player.h \
+    community.h

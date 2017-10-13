@@ -40,8 +40,6 @@ public:
 
     QVector<QLabel*> chipStacks;
 
-    void addPlayer(JsonString json_player);
-    void addPlayer(Player* player);
     void seat(Player* player);
 };
 

@@ -11,6 +11,7 @@
 #include "../globals.h"
 #include "../packet.h"
 #include "seat.h"
+#include "community.h"
 
 #define MAX_TABLE_SIZE 8
 
@@ -108,6 +109,7 @@ private:
     Ui::Game *ui;
     Account* account;
     Client* client;
+    Community community;
 
     QTimer new_game_timer;
 

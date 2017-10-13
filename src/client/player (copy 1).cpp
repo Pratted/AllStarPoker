@@ -3,21 +3,14 @@
 #include <QImage>
 #include <QDebug>
 
-#include "player.h"
+#include "../player.h"
 #include "seat.h"
 #include "card.h"
 #include "countdowntimer.h"
 
 Player::Player(int handle, int id, QString name, QObject *parent) : QObject(parent), handle(handle), id(id), name(name), move(BET)
 {
-    seat = nullptr;
-    timer = nullptr;
-}
 
-Player::Player(int seatid, QString name):id(seatid), name(name)
-{
-    seat = nullptr;
-    timer = nullptr;
 }
 
 

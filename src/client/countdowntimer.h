@@ -17,6 +17,7 @@ public slots:
     void setProgress(int progress);
     void updateProgress();
     void start();
+    void reset();
 
 signals:
     void timeout();

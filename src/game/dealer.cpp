@@ -12,7 +12,7 @@
 #include "game.h"
 
 #include "../packet.h"
-#include "../player.h"
+#include "player.h"
 
 #define TABLE_SIZE 8
 
@@ -241,11 +241,35 @@ Player* Dealer::findNextPlayer(Player* current_player){
 }
 
 
+Player* Dealer::findPlayerById(int id){
+    auto it = std::find_if(game->players.begin(), game->players.end(), [id](const Player* p){
+        return p->id == id;
+    });
+
+    return *it;
+}
+
 void Dealer::readMove(qintptr handle, QString payload){
     int id = handle_seats[handle];
+    Player* player = findPlayerById(id);
 
     game->player_timer.stop(); //stop timer; prevent player from timing out.
     qDebug() << "Player " << id << " has " << payload << endl;
+
+    Player::Move move = Player::Move(payload.toInt());
+
+    switch (move){
+    case Player::FOLD:
+        player->move = Player::FOLD;
+        break;
+    case Player::CALL:
+        player->move = Player::CALL;
+        player->chips -= community.current_bet - player->round_contribution;
+        break;
+    case Player::BET:
+
+        break;
+    }
 
 }
 
@@ -321,6 +345,9 @@ void Dealer::dealNewHand(){
 
     //start timer for next player.
     game->player_timer.start(game->timer_duration);
+
+    //start of hand -> current_player is the lead better.
+    current_player = lead_better;
 }
 
 void Dealer::shuffle(){
@@ -338,4 +365,23 @@ QVector<Card> Dealer::newDeck(){
     }
 
     return deck;
+}
+
+bool Dealer::isRoundFinshed(){
+    int remaining = players.size();
+    for(auto &player: players){
+        if(player->move == Player::FOLD){
+            remaining--;
+        }
+    }
+    //all but one players folded.
+    if(remaining == 1) return true;
+
+    //no betting left.
+    return prev_lead_better == lead_better;
+}
+
+bool Dealer::isSplitPot(){
+
+    return true;
 }
