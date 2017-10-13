@@ -11,7 +11,7 @@
 #include "../community.h"
 
 #define MAX_TABLE_SIZE 8
-#define DEFAULT_COUNTDOWN 5
+#define DEFAULT_COUNTDOWN 5000 //milliseconds
 #define DECK_SIZE 52
 
 typedef QString JsonString;

@@ -10,7 +10,7 @@
 
 #include "../globals.h"
 #include "../packet.h"
-#include "../card.h"
+#include "card.h"
 
 class Player;
 class Game;
@@ -45,7 +45,8 @@ public slots:
     void clearTable(){}
     void messageAll(Packet packet);
 
-    Player* findNextPlayer(QVector<Player*>::iterator current_player);
+    Player* findButton();
+    Player* findNextPlayer(Player* current_player);
 
     static QVector<Card> newDeck();
 signals:
@@ -60,10 +61,10 @@ private:
     Game* game;
     QVector<Card> deck;
 
-    Player* button;
-    Player* small_blind;
-    Player* big_blind;
-    Player* lead_better;
+    Player* button = nullptr;
+    Player* small_blind = nullptr;
+    Player* big_blind = nullptr;
+    Player* lead_better = nullptr;
 
     //std::vector<Player*> &players; //reference to the game's players.
     //std::map<int, bool> &seats; //map to check if seats are available.

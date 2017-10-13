@@ -92,8 +92,6 @@ void Game::peek(){
 
     Packet packet(Packet::C2S_PEEK_GAME, QString::number(this->id));
     emit packetReady(packet);
-
-    //this->setup();
 }
 
 void Game::sendMessage(){
@@ -123,7 +121,7 @@ void Game::startNewGameTimer(){
 }
 
 void Game::countdown(){
-    static int seconds_left = 5;
+    static int seconds_left = 4;
 
     QString msg = "The next round begins in: ";
     msg += QString::number(seconds_left);
@@ -137,6 +135,21 @@ void Game::countdown(){
         new_game_timer.stop();
         ui->labelBottomRight->hide();
     }
+}
+
+
+Player* Game::getPlayerFromId(int id){
+    return *std::find_if(players.begin(), players.end(), [id](const Player* p){
+        return p->getId() == id;
+    });
+}
+
+void Game::setPlayerTurn(QString payload){
+    qDebug() << "SETTING PLAYER TURN.\n";
+    int id = payload.toInt();
+
+    Player* p = getPlayerFromId(id);
+    p->startCountdownTimer();
 }
 
 bool Game::setup(){
@@ -165,29 +178,19 @@ bool Game::setup(){
 
     ui = new Ui::Game;
     ui->setupUi(this);
-    qDebug() << "Done setting up ui.";
+
     connect(ui->messageBox, &QLineEdit::returnPressed, this, &Game::sendMessage);
-
-    qDebug() << "Client: " << client;
-    qDebug() << "Id: " << this->id;
-
-    qDebug() << "Connected messagebox.";
     connect(ui->actionLeave_Game, &QAction::triggered, client, std::bind(&Client::leaveGame, client, this->id));
 
-    qDebug() << "Connected messagebox.";
-
-    //this->show();
-
-    qDebug() << "Done adding seats...";
     this->setBackground();
     this->positionSeats();
-    qDebug() << "Done positioning seats...";
-
-    //Packet packet(Packet::C2S_PEEK_GAME, QString::number(this->id));
-    //emit packetReady(packet);
 
     new_game_timer.setParent(this);
     connect(&new_game_timer, &QTimer::timeout, this, &Game::countdown);
+
+    ui->labelCardHolder->show();
+    ui->labelButtonHolder->show();
+    ui->labelPotHolder->show();
 
     return ok;
 }
@@ -197,14 +200,26 @@ void Game::addPlayer(Player* player){
 
     qDebug() << "Seat id: " << seat_id;
 
-
     seats[seat_id].seat(player);
 
-    //seats[seat_id].player = player;
-    //player->seat = seats[seat_id];
-    //
-    //player->seat->playerName->setText(player->name);
 
+    this->players.push_back(player);
+    std::sort(players.begin(), players.end(), [](const Player* a, const Player* b){
+        return a->getId() < b->getId();
+    });
+}
+
+
+void Game::refreshTable(){
+    qDebug() << "CHECKING TABLE\n";
+    for(auto &player: players){
+        qDebug() << "Checking player...\n";
+        if(player->move != Player::FOLD){
+            qDebug() << "SHOWING CARDS FOR PLAYER " << player->getId();
+            player->displayCards();
+            player->displayChips();
+        }
+    }
 }
 
 void Game::hideSeatButtons(){
@@ -212,8 +227,6 @@ void Game::hideSeatButtons(){
         seat.buttonSitInSeat->hide();
     }
 }
-
-
 
 void Game::showBetMenu(){
     ui->buttonCall->hide();
@@ -254,35 +267,6 @@ void Game::hideBetMenu() {
 void Game::startRoundTimer() {
     new_game_timer.start(1000);
 }
-
-/*
-void Game::countdown() {
-    static int secondsLeft = 6;
-    QString msg = "The next round begins in: ";
-
-    if (secondsLeft == 6) {
-        QFont labelFont;
-        labelFont.setPixelSize(20);
-        ui->labelBottomRight->setFont(labelFont);
-        secondsLeft--;
-    }
-
-    countdown += ('0' + secondsLeft);
-
-    if (secondsLeft) {
-        startRoundTimer();
-        ui->labelBottomRight->setText(countdown);
-        ui->labelBottomRight->show();
-        secondsLeft--;
-    }
-    else {
-        nextRoundTimer.stop();
-        ui->labelBottomRight->setText("");
-        ui->labelBottomRight->hide();
-        secondsLeft = 5;
-    }
-}
-*/
 
 void Game::setBackground() {
 
@@ -341,7 +325,6 @@ void Game::positionSeats(){
     QFont font;
     font.setPixelSize(20);
 
-
     //Seat 0
     {
         seats[0].buttonSitInSeat = ui->buttonSitInSeat0;
@@ -350,9 +333,9 @@ void Game::positionSeats(){
         seats[0].chipCount = ui->Player0ChipCount;
         seats[0].labelCard1 = ui->Player0Card1;
         seats[0].labelCard2 = ui->Player0Card2;
-        seats[0].timer = new CountdownTimer;
+        seats[0].timer = new CountdownTimer(ui->centralwidget);
         seats[0].timer->setGeometry(735, 25, 150, 150);
-        seats[0].timer->hide();
+
         seats[0].chipStacks[0] = ui->Player0Stack0;
         seats[0].chipStacks[1] = ui->Player0Stack1;
         seats[0].chipStacks[2] = ui->Player0Stack2;
@@ -373,6 +356,7 @@ void Game::positionSeats(){
         seats[1].timer = new CountdownTimer(ui->centralwidget);
         seats[1].timer->setGeometry(975, 175, 150, 150);
         seats[1].timer->hide();
+        seats[1].timer->setProgress(500);
 
         seats[1].chipStacks[0] = ui->Player1Stack0;
         seats[1].chipStacks[1] = ui->Player1Stack1;

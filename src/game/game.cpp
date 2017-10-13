@@ -17,7 +17,7 @@ Game::Game(QString name, int id, int size, long chip_count, int small_blind, int
     chip_start_amount(chip_count),
     small_blind(small_blind),
     big_blind(big_blind),
-    timer_duration(timer_duration),
+    timer_duration(timer_duration * 1000), //convert seconds to milliseconds.
     port(port),
     db(QSqlDatabase::addDatabase("QMYSQL")),
     dealer(this),
@@ -32,7 +32,10 @@ Game::Game(QString name, int id, int size, long chip_count, int small_blind, int
         std::cout << "Failed to connect to database\n";
     }
 
-    connect(&next_hand_timer, &QTimer::timeout, &dealer, &Dealer::dealNewHand);
+    connect(&next_hand_timer, &QTimer::timeout, this, [&](){std::cout << "READY TO DEAL NEW GAME!\n"; next_hand_timer.stop(); dealer.dealNewHand();});
+
+    //std::cout << "Next Hand Timer: " << next_hand_timer << std::endl;
+    //connect(&next_hand_timer, &QTimer::timeout, &dealer, &Dealer::dealNewHand);
     connect(this, &Game::ended, this, [&](){next_hand_timer.start(DEFAULT_COUNTDOWN);});
 }
 

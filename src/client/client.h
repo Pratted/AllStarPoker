@@ -3,12 +3,16 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QImage>
+#include <QLabel>
 
 #include "../packet.h"
 #include "../globals.h"
 
 #include "account.h"
 #include "mainmenu.h"
+
+//QImage CARD_SHEET("images/cardDeck.png");
 
 class MainMenu;
 class Game;
@@ -46,6 +50,7 @@ private:
     QString host = "";
     quint16 port = 0;
 
+    QImage card_sheet;
     Account account;
     MainMenu menu;
     LoginWindow* login_window;

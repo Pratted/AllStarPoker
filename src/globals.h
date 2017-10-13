@@ -37,4 +37,15 @@ namespace crypto {
     }
 }
 
+inline QString formatWithComma(long val) {
+    QString num = QString::number(val);
+    int pos = num.length() - 3;
+
+    while (pos > 0) {
+        num.insert(pos, ',');
+        pos -= 3;
+    }
+    return num;
+}
+
 #endif

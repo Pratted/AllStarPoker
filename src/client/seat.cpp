@@ -64,9 +64,17 @@ void Seat::seat(Player *player){
 
     player->seat->playerName->setText(player->getName());
 
+
+
     qDebug() << "About to show seat.\n";
     this->display();
     qDebug() << "showing seat...\n";
+    qDebug() << "player " << player->getId() << ". labelCard1 " << this->labelCard1;
+    player->card1.setLabel(this->labelCard1);
+    player->card2.setLabel(this->labelCard2);
+
+    qDebug() << "player " << player->getId() << ". labelCard1 " << player->card1.img();
+    //player->card2.setLabel(this->labelCard2);
 }
 
 void Seat::addPlayer(JsonString json_player){

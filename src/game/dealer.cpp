@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QSet>
 #include <QDir>
+#include <QTimer>
 #include <iostream>
 #include <algorithm>
 #include <random>
@@ -12,6 +13,8 @@
 
 #include "../packet.h"
 #include "../player.h"
+
+#define TABLE_SIZE 8
 
 void Dealer::incomingConnection(qintptr handle){
     game->clients[handle] = new QTcpSocket(this);
@@ -117,7 +120,9 @@ void Dealer::prepareGameStart(){
         clients.value(key)->write(out.package());
     }
 
+    std::cout << "Starting timer...\n";
     game->next_hand_timer.start(DEFAULT_COUNTDOWN);
+    std::cout << "Started\n";
 }
 
 
@@ -210,19 +215,29 @@ void Dealer::removePlayer(qintptr handle){
     */
 }
 
-Player* Dealer::findNextPlayer(QVector<Player*>::iterator current_player){
+Player* Dealer::findNextPlayer(Player* current_player){
     int seat = current_player->id;
     int id = current_player->id;
 
+    auto it = std::find_if(game->players.begin(), game->players.end(), [id](const Player* p){return p->id == id;});
+    auto original = it;
+
     do {
-        if(id == TABLE_SIZE - 1) id = 0;
-        else id++;
+        it++; //advance to next player.
 
-        if(players[id]->move != FOLD){
-            return players[id];
+        //end of vector; go back to begining.
+        if(it == game->players.end())
+            it = game->players.begin();
+
+
+        Player* player = *it;
+        if(player->move != Player::FOLD){
+            return player;
         }
+    } while(it != original);
 
-    } while(seat != id);
+    //no next player.
+    return nullptr;
 }
 
 
@@ -243,6 +258,13 @@ void Dealer::messageAll(Packet outgoing){
 }
 
 
+//Called once and only once when game starts for the first time.
+//initializes the button pointer.
+Player* Dealer::findButton(){
+    return game->players.front();
+}
+
+
 /*
  * Betting order
  * Button->Small Blind->Big Blind (last).
@@ -255,37 +277,50 @@ void Dealer::messageAll(Packet outgoing){
  *
 */
 void Dealer::dealNewHand(){
-    game->next_hand_timer.stop();
-    qDebug() << "Dealing new hand...";
+    std::cout << "Game: " << game << std::endl;
+    //game->next_hand_timer.stop();
+    std::cout << "Dealing new hand...";
 
     this->shuffle();
 
+    std::cout << "Shuffled deck.\n";
     //remove cards from back of deck and give to player.
     for(auto &player: game->players){
+        std::cout << "Dealing player ";
+        std::cout << player->id << std::endl;
         player->card1 = deck.back();
         deck.pop_back();
 
         player->card2 = deck.back();
         deck.pop_back();
 
-        QString cards = QString::number(player->card1.id()) + "," + QString::number(player->card2.id());
+        QString cards = QString::number(player->card1.id) + "," + QString::number(player->card2.id);
         Packet out(Packet::S2C_CARDSDEALT, cards);
-
+        std::cout << "Sending packet...\n";
         player->socket->write(out.package());
     }
 
+    //button will be nullptr for first game; initialize it.
+    if(!button) button = findButton();
+
+    std::cout << "Updating positional pointers.\n";
     //update positional pointers.
     button = findNextPlayer(button);
+
+    std::cout << "Set button.\n";
     small_blind = findNextPlayer(button);
     big_blind = findNextPlayer(small_blind);
     lead_better = findNextPlayer(big_blind);
 
+    std::cout << "Lead better: ";
+    std::cout << lead_better->id << std::endl;
+
     //notify all players of betting order.
-    Packet outgoing(Packet::Opcode::S2C_PLAYER_TURN, lead_better->id);
+    Packet outgoing(Packet::Opcode::S2C_PLAYER_TURN, QString::number(lead_better->id));
     messageAll(outgoing);
 
     //start timer for next player.
-    game->player_timer.start(30000);
+    game->player_timer.start(game->timer_duration);
 }
 
 void Dealer::shuffle(){

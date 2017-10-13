@@ -33,8 +33,8 @@ SOURCES += \
     seat.cpp \
     countdowntimer.cpp \
     ../packet.cpp \
-    ../player.cpp \
-    ../card.cpp
+    card.cpp \
+    player.cpp
 
 HEADERS += \
         mainmenu.h \
@@ -48,8 +48,7 @@ HEADERS += \
     seat.h \
     countdowntimer.h \
     ../player.h \
-    ../card.h \
-    ../card.h
+    card.h
 
 FORMS += \
         mainmenu.ui \

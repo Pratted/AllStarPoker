@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QEvent>
 #include <QPainter>
+#include <QTimer>
 
 class CountdownTimer : public QLabel
 {
@@ -14,13 +15,17 @@ public:
 
 public slots:
     void setProgress(int progress);
+    void updateProgress();
+    void start();
 
+signals:
+    void timeout();
 protected:
     void paintEvent(QPaintEvent* event);
 private:
     double progress;
-    QPen pen;
-    QPainter painter;
+    int start_time;
+    QTimer timer;
 };
 
 #endif // COUNTDOWNTIMER_H

@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QPair>
 #include <QSqlDatabase>
+#include <QImage>
 
 #include "../player.h"
 #include "../packet.h"
@@ -15,6 +16,7 @@
 #include "client.h"
 #include "game.h"
 #include "loginwindow.h"
+#include "countdowntimer.h"
 
 #include "ui_loginwindow.h"
 #include "ui_account.h"
@@ -25,6 +27,7 @@ Client::Client(LoginWindow* login_window, QObject *parent) :
     login_window(login_window),
     menu(this),
     game(new Game(this)),
+    card_sheet("images/cardDeck.png"),
     socket(new QTcpSocket(this))
 {
 
@@ -154,7 +157,8 @@ void Client::readPacket(){
                 game->displayMessage(incoming.payload);
                 break;
             case Packet::Opcode::S2C_CARDSDEALT:
-                //game->addSelf(incoming.payload);
+                player->setCards(incoming.payload);
+                game->refreshTable();
                 break;
             case Packet::Opcode::S2C_ACCOUNT_ACCEPTED:
                 qDebug() << "Account succesfully created!\n";
@@ -190,6 +194,11 @@ void Client::readPacket(){
                 qDebug() << "The dealer is telling us a player has joined the game.";
                 addPlayer(incoming.payload);
                 break;
+            case Packet::Opcode::S2C_PLAYER_TURN:
+                game->setPlayerTurn(incoming.payload);
+                qDebug() << "The deal is telling us it's a player's turn.\n";
+                break;
+
             case Packet::Opcode::S2C_REMOVE_PLAYER:
                 qDebug() << "A player has left the game.\n";
                 game->removePlayer(incoming.payload);
@@ -211,6 +220,7 @@ void Client::addPlayer(JsonString json_str){
 
     Player *player = new Player(seat_id, username);
     game->addPlayer(player);
+    //player->setCardSheet(&card_sheet);
 }
 
 void Client::addSelf(QString payload){
@@ -220,6 +230,12 @@ void Client::addSelf(QString payload){
     game->addPlayer(this->player);
 
     game->hideSeatButtons();
+    qDebug() << "Adding card...\n";
+
+    qDebug() << "labelcard1: " << player->seat->labelCard1;
+
+    connect(player->seat->timer, &CountdownTimer::timeout, player, &Player::fold);
+    //player->setCardSheet(&card_sheet);
 }
 
 void Client::leaveGame(int game_id){

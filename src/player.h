@@ -9,6 +9,7 @@
 
 class Account;
 class Seat;
+class QImage;
 
 class Player : public QObject
 {
@@ -16,6 +17,7 @@ class Player : public QObject
     friend class Dealer;
     friend class Client;
     friend class Seat;
+    friend class Game;
 public:
     explicit Player(int handle, int id, QString name, QObject *parent = 0);
     Player(int seatid, QString name):id(seatid), name(name){}
@@ -23,8 +25,17 @@ public:
     QString getName() const { return name; }
     int getId() const { return id; }
 
-    enum Move {FOLD, CALL, RAISE} move;
+    enum Move {FOLD, CALL, BET, CHECK} move;
 
+    void setCards(int c1, int c2);
+    void setCards(QString payload);
+    //void setCardSheet(QImage* card_sheet){this->card_sheet = card_sheet;}
+
+    void displayCards();
+    void displayChips();
+
+    void startCountdownTimer();
+    void fold();
 private:
     const int id;
     int handle;
