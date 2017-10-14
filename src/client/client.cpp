@@ -198,11 +198,17 @@ void Client::readPacket(){
                 game->setPlayerTurn(incoming.payload);
                 qDebug() << "The deal is telling us it's a player's turn.\n";
                 break;
-
+            case Packet::Opcode::S2C_BLINDS:
+                qDebug() << "Setting blinds for this hand.";
+                game->setBlinds(incoming.payload);
+                break;
             case Packet::Opcode::S2C_REMOVE_PLAYER:
                 qDebug() << "A player has left the game.\n";
                 game->removePlayer(incoming.payload);
                 break;
+        default:
+            qDebug() << "UNKNOWN PACKET!!!!\n";
+            qDebug() << "Contents: " << incoming.payload;
         }
     }
 }

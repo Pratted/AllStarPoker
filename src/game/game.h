@@ -8,7 +8,7 @@
 #include <QSqlDatabase>
 
 #include "dealer.h"
-#include "../community.h"
+#include "community.h"
 
 #define MAX_TABLE_SIZE 8
 #define DEFAULT_COUNTDOWN 5000 //milliseconds
@@ -49,7 +49,6 @@ public:
     long getchipCount();
 
     bool start();
-    bool isHandFinshed();
 
     int size() const { return players.size(); }
 

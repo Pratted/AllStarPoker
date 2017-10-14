@@ -57,6 +57,7 @@ public:
     void removePlayer(QString payload);
     void refreshTable();
     void setPlayerTurn(QString payload);
+    void setBlinds(QString payload);
 
     QPushButton* push_button;
     QVector<Seat> seats;
@@ -70,28 +71,6 @@ public:
         QTableWidgetItem* item_status;
     } table_row;
 
-    /*
-    class BetMenu {
-    private:
-        QLabel* button_holder;
-        QLabel* card_holder;
-        QLabel* card1;
-        QLabel* card2;
-
-        QPushButton* button_submit;
-        QPushButton* button_cancel;
-        QPushButton* button_bet;
-        QPushButton* button_fold;
-        QPushButton* button_decrement_bet;
-        QPushButton* button_increment_bet;
-    public:
-
-        void show();
-
-
-
-    } bet_menu;
-    */
 
     ~Game();
 signals:

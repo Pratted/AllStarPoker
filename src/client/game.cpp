@@ -3,6 +3,7 @@
 #include <QPalette>
 #include <QDebug>
 #include <QInputDialog>
+#include <QLabel>
 
 #include "../packet.h"
 #include "player.h"
@@ -15,7 +16,6 @@
 #include "client.h"
 
 #include "ui_game.h"
-
 
 Game::Game(QWidget *parent) :
     QMainWindow(parent)
@@ -207,12 +207,34 @@ void Game::addPlayer(Player* player){
 }
 
 
+void Game::setBlinds(QString payload){
+    int dealer = payload.split(",")[0].toInt();
+    int big_blind = payload.split(",")[1].toInt();
+    int small_blind = payload.split(",")[2].toInt();
+
+    Player* p = getPlayerFromId(dealer);
+    p->seat->blind_chip->setPixmap(QPixmap::fromImage(Seat::dealer_chip_img));
+    p->seat->blind_chip->show();
+
+    p = getPlayerFromId(big_blind);
+    p->seat->blind_chip->setPixmap(QPixmap::fromImage(Seat::big_blind_img));
+    p->seat->blind_chip->show();
+
+    qDebug() << "Showing big blind chip for player " << p->id;
+    p = getPlayerFromId(small_blind);
+    p->seat->blind_chip->setPixmap(QPixmap::fromImage(Seat::small_blind_img));
+    p->seat->blind_chip->show();
+}
+
 void Game::refreshTable(){
     qDebug() << "CHECKING TABLE\n";
     for(auto &player: players){
         qDebug() << "Checking player...\n";
         if(player->move != Player::FOLD){
             qDebug() << "SHOWING CARDS FOR PLAYER " << player->getId();
+            qDebug() << "Card1: " << player->card1.id();
+            qDebug() << "Card2: " << player->card2.id();
+
             player->displayCards();
             player->displayChips();
         }
@@ -300,6 +322,7 @@ void Game::setBackground() {
     ui->placeholder2->hide();
     ui->placeholder1->hide();
 
+    ui->player0_blind->hide();
     ui->player1_blind->hide();
     ui->player2_blind->hide();
     ui->player3_blind->hide();
@@ -307,7 +330,6 @@ void Game::setBackground() {
     ui->player5_blind->hide();
     ui->player6_blind->hide();
     ui->player7_blind->hide();
-    ui->player8_blind->hide();
 
     ui->labelPotHolder->hide();
     ui->labelPot->setText("");
@@ -341,6 +363,7 @@ void Game::positionSeats(){
         seats[0].labelCard2 = ui->Player0Card2;
         seats[0].timer = new CountdownTimer(ui->centralwidget);
         seats[0].timer->setGeometry(735, 25, 150, 150);
+        seats[0].blind_chip = ui->player0_blind;
 
         seats[0].chipStacks[0] = ui->Player0Stack0;
         seats[0].chipStacks[1] = ui->Player0Stack1;
@@ -363,6 +386,7 @@ void Game::positionSeats(){
         seats[1].timer->setGeometry(975, 175, 150, 150);
         seats[1].timer->hide();
         seats[1].timer->setProgress(500);
+        seats[1].blind_chip = ui->player1_blind;
 
         seats[1].chipStacks[0] = ui->Player1Stack0;
         seats[1].chipStacks[1] = ui->Player1Stack1;
@@ -384,6 +408,7 @@ void Game::positionSeats(){
         seats[2].timer = new CountdownTimer(ui->centralwidget);
         seats[2].timer->setGeometry(945, 365, 150, 150);
         seats[2].timer->hide();
+        seats[2].blind_chip = ui->player2_blind;
 
         seats[2].chipStacks[0] = ui->Player2Stack0;
         seats[2].chipStacks[1] = ui->Player2Stack1;
@@ -405,6 +430,7 @@ void Game::positionSeats(){
         seats[3].timer = new CountdownTimer(ui->centralwidget);
         seats[3].timer->setGeometry(675, 455, 150, 150);
         seats[3].timer->hide();
+        seats[3].blind_chip = ui->player3_blind;
 
         seats[3].chipStacks[0] = ui->Player3Stack0;
         seats[3].chipStacks[1] = ui->Player3Stack1;
@@ -426,6 +452,7 @@ void Game::positionSeats(){
         seats[4].timer = new CountdownTimer(ui->centralwidget);
         seats[4].timer->setGeometry(478, 455, 150, 150);
         seats[4].timer->hide();
+        seats[4].blind_chip = ui->player4_blind;
 
         seats[4].chipStacks[0] = ui->Player4Stack0;
         seats[4].chipStacks[1] = ui->Player4Stack1;
@@ -448,6 +475,7 @@ void Game::positionSeats(){
         seats[5].timer = new CountdownTimer(ui->centralwidget);
         seats[5].timer->setGeometry(208, 365, 150, 150);
         seats[5].timer->hide();
+        seats[5].blind_chip = ui->player5_blind;
 
         seats[5].chipStacks[0] = ui->Player5Stack0;
         seats[5].chipStacks[1] = ui->Player5Stack1;
@@ -470,6 +498,7 @@ void Game::positionSeats(){
         seats[6].timer = new CountdownTimer(ui->centralwidget);
         seats[6].timer->setGeometry(188, 165, 150, 150);
         seats[6].timer->hide();
+        seats[6].blind_chip = ui->player6_blind;
 
         seats[6].chipStacks[0] = ui->Player6Stack0;
         seats[6].chipStacks[1] = ui->Player6Stack1;
@@ -491,6 +520,7 @@ void Game::positionSeats(){
         seats[7].timer = new CountdownTimer(ui->centralwidget);
         seats[7].timer->setGeometry(398, 25, 150, 150);
         seats[7].timer->hide();
+        seats[7].blind_chip = ui->player7_blind;
 
         seats[7].chipStacks[0] = ui->Player7Stack0;
         seats[7].chipStacks[1] = ui->Player7Stack1;

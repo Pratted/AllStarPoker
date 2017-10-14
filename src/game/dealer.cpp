@@ -264,7 +264,7 @@ void Dealer::readMove(qintptr handle, QString payload){
         break;
     case Player::CALL:
         player->move = Player::CALL;
-        player->chips -= community.current_bet - player->round_contribution;
+        //player->chips -= community.current_bet - player->round_contribution;
         break;
     case Player::BET:
 
@@ -343,6 +343,11 @@ void Dealer::dealNewHand(){
     Packet outgoing(Packet::Opcode::S2C_PLAYER_TURN, QString::number(lead_better->id));
     messageAll(outgoing);
 
+    //notify players of blinds
+    QString blinds = QString::number(button->id) + "," + QString::number(big_blind->id) + "," + QString::number(small_blind->id);
+    Packet outgoing2(Packet::Opcode::S2C_BLINDS, blinds);
+    messageAll(outgoing2);
+
     //start timer for next player.
     game->player_timer.start(game->timer_duration);
 
@@ -368,8 +373,8 @@ QVector<Card> Dealer::newDeck(){
 }
 
 bool Dealer::isRoundFinshed(){
-    int remaining = players.size();
-    for(auto &player: players){
+    int remaining = game->players.size();
+    for(auto &player: game->players){
         if(player->move == Player::FOLD){
             remaining--;
         }
@@ -381,7 +386,9 @@ bool Dealer::isRoundFinshed(){
     return prev_lead_better == lead_better;
 }
 
+/*
 bool Dealer::isSplitPot(){
 
     return true;
 }
+*/

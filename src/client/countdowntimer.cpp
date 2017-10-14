@@ -26,7 +26,6 @@ void CountdownTimer::updateProgress(){
         emit timeout();
     }
     else{
-        qDebug() << "Progress: " << progress;
         progress -= (1.0 / (10 * start_time));
         this->update();
     }

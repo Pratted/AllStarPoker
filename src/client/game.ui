@@ -2684,7 +2684,7 @@ color: white</string>
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="player1_blind">
+   <widget class="QLabel" name="player0_blind">
     <property name="geometry">
      <rect>
       <x>850</x>
@@ -2700,7 +2700,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player2_blind">
+   <widget class="QLabel" name="player1_blind">
     <property name="geometry">
      <rect>
       <x>950</x>
@@ -2716,7 +2716,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player3_blind">
+   <widget class="QLabel" name="player2_blind">
     <property name="geometry">
      <rect>
       <x>900</x>
@@ -2732,7 +2732,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player4_blind">
+   <widget class="QLabel" name="player3_blind">
     <property name="geometry">
      <rect>
       <x>710</x>
@@ -2748,7 +2748,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player5_blind">
+   <widget class="QLabel" name="player4_blind">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -2764,7 +2764,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player6_blind">
+   <widget class="QLabel" name="player5_blind">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -2780,7 +2780,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player7_blind">
+   <widget class="QLabel" name="player6_blind">
     <property name="geometry">
      <rect>
       <x>310</x>
@@ -2796,7 +2796,7 @@ color: white</string>
      <pixmap>images/big_blind.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="player8_blind">
+   <widget class="QLabel" name="player7_blind">
     <property name="geometry">
      <rect>
       <x>450</x>
@@ -2952,6 +2952,7 @@ color: white</string>
    <zorder>messageBox</zorder>
    <zorder>messageBrowser</zorder>
    <zorder>labelPot</zorder>
+   <zorder>player0_blind</zorder>
    <zorder>player1_blind</zorder>
    <zorder>player2_blind</zorder>
    <zorder>player3_blind</zorder>
@@ -2959,7 +2960,6 @@ color: white</string>
    <zorder>player5_blind</zorder>
    <zorder>player6_blind</zorder>
    <zorder>player7_blind</zorder>
-   <zorder>player8_blind</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

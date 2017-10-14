@@ -67,3 +67,10 @@ void Player::fold(){
     qDebug() << "Player " << id << " has folded.\n";
 }
 
+void Player::displayBigBlind(){
+
+
+}
+void Player::displaySmallBlind(){}
+void Player::displayDealer(){}
+void Player::hideBlindChip(){}

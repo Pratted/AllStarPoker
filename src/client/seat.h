@@ -32,6 +32,7 @@ public:
     QLabel* labelCard1;
     QLabel* labelCard2;
     QLabel* placeholder;
+    QLabel* blind_chip;
 
     QLabel* labelTimer;
     CountdownTimer* timer;
@@ -41,6 +42,10 @@ public:
     QVector<QLabel*> chipStacks;
 
     void seat(Player* player);
+
+    static QImage big_blind_img;
+    static QImage small_blind_img;
+    static QImage dealer_chip_img;
 };
 
 #endif // SEAT_H

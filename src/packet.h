@@ -52,7 +52,7 @@ public:
         C2S_KEY,
         C2S_CHOSE_NAME,
         S2C_SEAT_ACCEPT,
-        S2C_SEAT_REJECT
+        S2C_SEAT_REJECT,
     } opcode;
 
     enum Type {

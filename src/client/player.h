@@ -31,15 +31,21 @@ public:
     void setCards(int c1, int c2);
     void setCards(QString payload);
 
+    //display the 3 chips - dealer, bb, sb
+    void displayBigBlind();
+    void displaySmallBlind();
+    void displayDealer();
+
+    void hideBlindChip();
+
     void displayCards();
     void displayChips();
 
     void startCountdownTimer();
-    void fold();
 
+    void fold();
     void bet(int amount);
     void call(int amount);
-
     void check();
 private:
     const int id;

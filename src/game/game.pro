@@ -34,10 +34,6 @@ HEADERS += \
     dealer.h \
     ../packet.h \
     ../globals.h \
-    ../community.h \
-    ../player.h \
-    ../globals.h \
-    ../player.h \
     card.h \
     player.h \
     community.h

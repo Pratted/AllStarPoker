@@ -88,16 +88,4 @@ bool Game::connectToDatabase(){
     return db.open();
 }
 
-bool Game::isHandFinshed(){
-    int remaining = players.size();
-    for(auto &player: players){
-        if(player->move == Player::FOLD){
-            remaining--;
-        }
-    }
-    //all but one players folded.
-    if(remaining == 1) return true;
 
-    //river has been dealt & no betting left.
-    return false;
-}

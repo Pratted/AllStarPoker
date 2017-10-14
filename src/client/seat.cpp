@@ -5,7 +5,10 @@
 #include "seat.h"
 #include "countdowntimer.h"
 
-//#include "player.h"
+
+QImage Seat::big_blind_img = QImage("images/big_blind.png");
+QImage Seat::small_blind_img = QImage("images/small_blind.png");
+QImage Seat::dealer_chip_img = QImage("images/dealer.png");
 
 Seat::Seat(int id) :id(id), chipStacks(8) {}
 
