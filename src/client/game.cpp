@@ -228,6 +228,7 @@ void Game::setBlinds(QString payload){
 
 void Game::refreshTable(){
     qDebug() << "CHECKING TABLE\n";
+    qDebug() << "There are " << players.size() << " players";
     for(auto &player: players){
         qDebug() << "Checking player...\n";
         if(player->move != Player::FOLD){
@@ -237,6 +238,9 @@ void Game::refreshTable(){
 
             player->displayCards();
             player->displayChips();
+        }
+        else{
+            qDebug() << "IGNORING PLAYER " << player->id;
         }
     }
 }

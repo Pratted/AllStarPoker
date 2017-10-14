@@ -26,17 +26,10 @@ public:
     QString getName() const { return name; }
     int getId() const { return id; }
 
-    enum Move {FOLD, CALL, BET, CHECK} move;
+    enum Move {FOLD, CALL, BET, CHECK, NONE} move;
 
     void setCards(int c1, int c2);
     void setCards(QString payload);
-
-    //display the 3 chips - dealer, bb, sb
-    void displayBigBlind();
-    void displaySmallBlind();
-    void displayDealer();
-
-    void hideBlindChip();
 
     void displayCards();
     void displayChips();

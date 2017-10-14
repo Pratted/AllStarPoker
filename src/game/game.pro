@@ -15,8 +15,8 @@ SOURCES += main.cpp \
     game.cpp \
     dealer.cpp \
     ../packet.cpp \
-    card.cpp \
-    player.cpp
+    player.cpp \
+    hand.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -36,4 +36,5 @@ HEADERS += \
     ../globals.h \
     card.h \
     player.h \
-    community.h
+    community.h \
+    hand.h

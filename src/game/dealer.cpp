@@ -10,6 +10,7 @@
 
 #include "dealer.h"
 #include "game.h"
+#include "hand.h"
 
 #include "../packet.h"
 #include "player.h"
@@ -29,7 +30,10 @@ void Dealer::incomingConnection(qintptr handle){
     std::cout << "A client has connected!\n";
 
     sendExistingPlayers(handle);
+
+    connect(&game->player_timer, &QTimer::timeout, this, &Dealer::forceFold);
 }
+
 void Dealer::sendExistingPlayers(qintptr handle){
     for(auto &player: game->players){
         Packet packet(Packet::Opcode::S2C_ADD_PLAYER, player->toJsonString(), Packet::Type::JSON);
@@ -194,27 +198,6 @@ void Dealer::readPacket(qintptr handle){
     }
 }
 
-void Dealer::removePlayer(qintptr handle){
-    /*
-    auto it = std::find_if(game->players.begin(), game->players.end(), [handle](const Player* p){
-        return handle == p->handle;
-    });
-
-    Player* player = *it;
-
-    if(it != game->players.end())
-        game->players.erase(it);
-    else
-        qDebug() << "Error, could not remove player...\n";
-
-    //disconnect readyReady signal from dealer.
-    disconnect(connections[handle]);
-
-    emit clientLeaving(handle);
-    //connections[handle] = connect(clients[handle]->socket, &QTcpSocket::readyRead, this, std::bind(&Server::readPacket, this, handle));
-    */
-}
-
 Player* Dealer::findNextPlayer(Player* current_player){
     int seat = current_player->id;
     int id = current_player->id;
@@ -249,9 +232,26 @@ Player* Dealer::findPlayerById(int id){
     return *it;
 }
 
-void Dealer::readMove(qintptr handle, QString payload){
+void Dealer::forceFold(){
+    qDebug() << "The current player: " << current_player->id << " has timed out.";
+
+    game->player_timer.blockSignals(true);
+    game->player_timer.stop();
+
+    current_player->move = Player::FOLD;
+    current_player->timeouts++;
+
+    game->player_timer.blockSignals(false);
+    game->player_timer.start(game->timer_duration);
+}
+
+void Dealer::readMove(qintptr handle, QString payload, bool timed_out){
     int id = handle_seats[handle];
     Player* player = findPlayerById(id);
+
+    if(!timed_out){
+        player->timeouts = 0; //reset timeouts.
+    }
 
     game->player_timer.stop(); //stop timer; prevent player from timing out.
     qDebug() << "Player " << id << " has " << payload << endl;
@@ -270,7 +270,6 @@ void Dealer::readMove(qintptr handle, QString payload){
 
         break;
     }
-
 }
 
 
@@ -348,11 +347,16 @@ void Dealer::dealNewHand(){
     Packet outgoing2(Packet::Opcode::S2C_BLINDS, blinds);
     messageAll(outgoing2);
 
+
     //start timer for next player.
     game->player_timer.start(game->timer_duration);
+    game->player_timer.blockSignals(false);
+    qDebug() << "Strted player timer for " << game->timer_duration;
 
     //start of hand -> current_player is the lead better.
     current_player = lead_better;
+
+    hand.reset(new Hand(game->players, lead_better, game->big_blind, game->small_blind));
 }
 
 void Dealer::shuffle(){
@@ -372,19 +376,7 @@ QVector<Card> Dealer::newDeck(){
     return deck;
 }
 
-bool Dealer::isRoundFinshed(){
-    int remaining = game->players.size();
-    for(auto &player: game->players){
-        if(player->move == Player::FOLD){
-            remaining--;
-        }
-    }
-    //all but one players folded.
-    if(remaining == 1) return true;
 
-    //no betting left.
-    return prev_lead_better == lead_better;
-}
 
 /*
 bool Dealer::isSplitPot(){

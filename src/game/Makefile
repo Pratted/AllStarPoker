@@ -55,16 +55,16 @@ SOURCES       = main.cpp \
 		game.cpp \
 		dealer.cpp \
 		../packet.cpp \
-		card.cpp \
-		player.cpp moc_game.cpp \
+		player.cpp \
+		hand.cpp moc_game.cpp \
 		moc_dealer.cpp \
 		moc_player.cpp
 OBJECTS       = main.o \
 		game.o \
 		dealer.o \
 		packet.o \
-		card.o \
 		player.o \
+		hand.o \
 		moc_game.o \
 		moc_dealer.o \
 		moc_player.o
@@ -251,12 +251,13 @@ DIST          = ../../../../Qt/5.9/gcc_64/mkspecs/features/spec_pre.prf \
 		../globals.h \
 		card.h \
 		player.h \
-		community.h main.cpp \
+		community.h \
+		hand.h main.cpp \
 		game.cpp \
 		dealer.cpp \
 		../packet.cpp \
-		card.cpp \
-		player.cpp
+		player.cpp \
+		hand.cpp
 QMAKE_TARGET  = game
 DESTDIR       = 
 TARGET        = game
@@ -646,8 +647,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.9/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents game.h dealer.h ../packet.h ../globals.h card.h player.h community.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp game.cpp dealer.cpp ../packet.cpp card.cpp player.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents game.h dealer.h ../packet.h ../globals.h card.h player.h community.h hand.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp game.cpp dealer.cpp ../packet.cpp player.cpp hand.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -775,6 +776,7 @@ moc_game.cpp: ../../../../Qt/5.9/gcc_64/include/QtCore/QObject \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QJsonDocument \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsondocument.h \
 		card.h \
+		hand.h \
 		community.h \
 		game.h \
 		moc_predefs.h \
@@ -868,6 +870,7 @@ moc_dealer.cpp: ../../../../Qt/5.9/gcc_64/include/QtCore/QObject \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QJsonObject \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsonobject.h \
 		card.h \
+		hand.h \
 		dealer.h \
 		moc_predefs.h \
 		../../../../Qt/5.9/gcc_64/bin/moc
@@ -1060,6 +1063,7 @@ main.o: main.cpp ../../../../Qt/5.9/gcc_64/include/QtCore/QCoreApplication \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QJsonDocument \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsondocument.h \
 		card.h \
+		hand.h \
 		community.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
@@ -1165,6 +1169,7 @@ game.o: game.cpp ../../../../Qt/5.9/gcc_64/include/QtCore/QJsonDocument \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QDataStream \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qdatastream.h \
 		card.h \
+		hand.h \
 		community.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o game.o game.cpp
 
@@ -1266,6 +1271,7 @@ dealer.o: dealer.cpp ../../../../Qt/5.9/gcc_64/include/QtNetwork/QTcpSocket \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QJsonObject \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsonobject.h \
 		card.h \
+		hand.h \
 		game.h \
 		../../../../Qt/5.9/gcc_64/include/QtSql/QSqlDatabase \
 		../../../../Qt/5.9/gcc_64/include/QtSql/qsqldatabase.h \
@@ -1347,9 +1353,6 @@ packet.o: ../packet.cpp ../../../../Qt/5.9/gcc_64/include/QtCore/QByteArray \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsonobject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o packet.o ../packet.cpp
 
-card.o: card.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o card.o card.cpp
-
 player.o: player.cpp ../../../../Qt/5.9/gcc_64/include/QtCore/QJsonDocument \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsondocument.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qjsonvalue.h \
@@ -1430,6 +1433,72 @@ player.o: player.cpp ../../../../Qt/5.9/gcc_64/include/QtCore/QJsonDocument \
 		card.h \
 		community.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o player.o player.cpp
+
+hand.o: hand.cpp hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qvector.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qglobal.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qconfig.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qlogging.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qflags.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qatomic.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qmutex.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qnumeric.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qiterator.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qlist.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qrefcount.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qarraydata.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qchar.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qpair.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qbytearray.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qnamespace.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qstring.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qstringlist.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qregexp.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qpoint.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qmap.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qdebug.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qhash.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qtextstream.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qiodevice.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qobject.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qmetatype.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qobject_impl.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qlocale.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qvariant.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qshareddata.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qset.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qsharedpointer.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		card.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o hand.o hand.cpp
 
 moc_game.o: moc_game.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_game.o moc_game.cpp

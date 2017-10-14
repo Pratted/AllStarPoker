@@ -13,6 +13,7 @@
 #define MAX_TABLE_SIZE 8
 #define DEFAULT_COUNTDOWN 5000 //milliseconds
 #define DECK_SIZE 52
+#define MAX_CONSECUTIVE_TIMEOUTS 3
 
 typedef QString JsonString;
 
@@ -49,6 +50,9 @@ public:
     long getchipCount();
 
     bool start();
+
+    bool isRoundFinshed();
+    bool hasWinner();
 
     int size() const { return players.size(); }
 

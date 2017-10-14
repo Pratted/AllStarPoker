@@ -8,13 +8,13 @@
 #include "card.h"
 #include "countdowntimer.h"
 
-Player::Player(int handle, int id, QString name, QObject *parent) : QObject(parent), handle(handle), id(id), name(name), move(BET)
+Player::Player(int handle, int id, QString name, QObject *parent) : QObject(parent), handle(handle), id(id), name(name), move(NONE)
 {
     seat = nullptr;
     timer = nullptr;
 }
 
-Player::Player(int seatid, QString name):id(seatid), name(name)
+Player::Player(int seatid, QString name):id(seatid), name(name), move(NONE)
 {
     seat = nullptr;
     timer = nullptr;
@@ -66,11 +66,3 @@ void Player::startCountdownTimer(){
 void Player::fold(){
     qDebug() << "Player " << id << " has folded.\n";
 }
-
-void Player::displayBigBlind(){
-
-
-}
-void Player::displaySmallBlind(){}
-void Player::displayDealer(){}
-void Player::hideBlindChip(){}

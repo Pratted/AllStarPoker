@@ -24,7 +24,7 @@ public:
     QString getName() const { return name; }
     int getId() const { return id; }
 
-    enum Move {FOLD, CALL, BET, CHECK} move;
+    enum Move {FOLD, CALL, BET, CHECK, NONE} move;
 
     void setCards(int c1, int c2);
     void setCards(QString payload);
@@ -47,6 +47,7 @@ private:
     int chips;
     int hand_contribution;
     int round_contribution; //chips contributed this round (i.e. flop, turn, river).
+    int timeouts;
 
     Card card1;
     Card card2;
