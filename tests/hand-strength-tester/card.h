@@ -4,7 +4,9 @@
 #define CARD_WIDTH 44
 #define CARD_HEIGHT 63
 #define ACE_LOW 0
-#define ACE_HIGH 13
+
+#define ACE_HIGH 99 // used to construct a high ace when suit is negligable.
+#define ACE_HIGH_RANK 13 //used to change rank to high ace while perserving suit.
 
 class QLabel;
 class QImage;
@@ -16,6 +18,12 @@ public:
     Card();
     Card(int id); //:_id(id), _rank(id % 13), _suit(Suit(id / 13)){}
     Card(int id, QLabel* label);
+
+    Card(const Card &rhs);
+    Card(Card &&rhs);
+
+    Card& operator=(const Card &rhs);
+    Card& operator=(Card &&rhs);
 
     ~Card();
     enum Suit{ HEART=0, DIAMOND=1, CLUB=2, SPADE=3 };
@@ -33,6 +41,7 @@ public:
 
     void setId(int id);
     void setLabel(QLabel* label);
+    void setRank(int rank);
 
     static QImage card_sheet;
 private:

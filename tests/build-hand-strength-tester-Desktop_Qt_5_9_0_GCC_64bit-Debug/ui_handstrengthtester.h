@@ -16,6 +16,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 
@@ -33,7 +34,7 @@ public:
     QLabel *player2_card2;
     QLabel *player2_card1;
     QLabel *player3_card2;
-    QLabel *player3_card3;
+    QLabel *player3_card1;
     QLabel *player4_card2;
     QLabel *player4_card1;
     QLabel *player5_card2;
@@ -56,6 +57,7 @@ public:
     QLabel *card2;
     QLabel *card5;
     QLabel *description;
+    QPushButton *button_test_again;
 
     void setupUi(QMainWindow *HandStrengthTester)
     {
@@ -96,10 +98,10 @@ public:
         player3_card2->setObjectName(QStringLiteral("player3_card2"));
         player3_card2->setGeometry(QRect(220, 390, 44, 63));
         player3_card2->setPixmap(QPixmap(QString::fromUtf8("../images/cardDeck.png")));
-        player3_card3 = new QLabel(centralWidget);
-        player3_card3->setObjectName(QStringLiteral("player3_card3"));
-        player3_card3->setGeometry(QRect(170, 390, 44, 63));
-        player3_card3->setPixmap(QPixmap(QString::fromUtf8("../images/cardDeck.png")));
+        player3_card1 = new QLabel(centralWidget);
+        player3_card1->setObjectName(QStringLiteral("player3_card1"));
+        player3_card1->setGeometry(QRect(170, 390, 44, 63));
+        player3_card1->setPixmap(QPixmap(QString::fromUtf8("../images/cardDeck.png")));
         player4_card2 = new QLabel(centralWidget);
         player4_card2->setObjectName(QStringLiteral("player4_card2"));
         player4_card2->setGeometry(QRect(810, 60, 44, 63));
@@ -179,6 +181,9 @@ public:
         description = new QLabel(centralWidget);
         description->setObjectName(QStringLiteral("description"));
         description->setGeometry(QRect(330, 370, 371, 131));
+        button_test_again = new QPushButton(centralWidget);
+        button_test_again->setObjectName(QStringLiteral("button_test_again"));
+        button_test_again->setGeometry(QRect(810, 490, 151, 23));
         HandStrengthTester->setCentralWidget(centralWidget);
 
         retranslateUi(HandStrengthTester);
@@ -197,7 +202,7 @@ public:
         player2_card2->setText(QString());
         player2_card1->setText(QString());
         player3_card2->setText(QString());
-        player3_card3->setText(QString());
+        player3_card1->setText(QString());
         player4_card2->setText(QString());
         player4_card1->setText(QString());
         player5_card2->setText(QString());
@@ -252,6 +257,7 @@ public:
         card2->setText(QString());
         card5->setText(QString());
         description->setText(QApplication::translate("HandStrengthTester", "TextLabel", Q_NULLPTR));
+        button_test_again->setText(QApplication::translate("HandStrengthTester", "Test Again", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -2,6 +2,8 @@
 #define HANDSTRENGTHTESTER_H
 
 #include <QMainWindow>
+#include <vector>
+#include "hand.h"
 
 class Player;
 
@@ -24,12 +26,14 @@ public:
         void findBestHand(Player* p);
     } dealer;
 
+    void showAllCards();
     void test();
-    QVector<Player*> players;
 
     ~HandStrengthTester();
 
 private:
+    QVector<Player*> players;
+    Hand* hand;
     Ui::HandStrengthTester *ui;
 };
 

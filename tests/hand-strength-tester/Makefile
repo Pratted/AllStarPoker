@@ -241,7 +241,8 @@ DIST          = ../../../../Qt/5.9/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.9/gcc_64/mkspecs/features/lex.prf \
 		hand-strength-tester.pro handstrengthtester.h \
 		card.h \
-		hand.h main.cpp \
+		hand.h \
+		player.h main.cpp \
 		handstrengthtester.cpp \
 		card.cpp \
 		hand.cpp
@@ -638,7 +639,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.9/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents handstrengthtester.h card.h hand.h $(DISTDIR)/
+	$(COPY_FILE) --parents handstrengthtester.h card.h hand.h player.h $(DISTDIR)/
 	$(COPY_FILE) --parents main.cpp handstrengthtester.cpp card.cpp hand.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents handstrengthtester.ui $(DISTDIR)/
 
@@ -778,6 +779,11 @@ moc_handstrengthtester.cpp: ../../../../Qt/5.9/gcc_64/include/QtWidgets/QMainWin
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qicon.h \
+		hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		card.h \
 		handstrengthtester.h \
 		moc_predefs.h \
 		../../../../Qt/5.9/gcc_64/bin/moc
@@ -906,6 +912,11 @@ main.o: main.cpp handstrengthtester.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qicon.h \
+		hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		card.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/QApplication \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qapplication.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1019,6 +1030,11 @@ handstrengthtester.o: handstrengthtester.cpp handstrengthtester.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qicon.h \
+		hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		card.h \
 		ui_handstrengthtester.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QVariant \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/QAction \
@@ -1059,7 +1075,8 @@ handstrengthtester.o: handstrengthtester.cpp handstrengthtester.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtextcursor.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtextformat.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qpen.h \
-		../../../../Qt/5.9/gcc_64/include/QtWidgets/QWidget
+		../../../../Qt/5.9/gcc_64/include/QtWidgets/QWidget \
+		player.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o handstrengthtester.o handstrengthtester.cpp
 
 card.o: card.cpp ../../../../Qt/5.9/gcc_64/include/QtGui/QImage \
@@ -1233,7 +1250,9 @@ hand.o: hand.cpp hand.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qcontiguouscache.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qsharedpointer.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		card.h
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		card.h \
+		player.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o hand.o hand.cpp
 
 moc_handstrengthtester.o: moc_handstrengthtester.cpp 

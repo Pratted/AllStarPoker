@@ -76,34 +76,42 @@ public:
 
     enum Type {NONE, HIGH_CARD, PAIR, TWO_PAIR, THREE_KIND, STRAIGHT, FLUSH, FULL_HOUSE, FOUR_KIND, STRAIGHT_FLUSH};
 
-    typedef std::pair<Hand::Type, std::vector<Card>> ranked_hand;
+    struct ranked_hand {
+        ranked_hand(Hand::Type type, std::vector<Card> hand):type(type), hand(hand){}
+        Hand::Type type;
+        std::vector<Card> hand;
+    };
+
     static Hand::ranked_hand emptyHand();
 private:
-
-    static bool sort_flush(Card &a, Card &b);
     static bool sort_straight(Card &a, Card &b);
+    static bool is_ace_low(Card& a);
 
     static std::vector<Card> removeDuplicateRanks(std::vector<Card> hand);
-    static Card getHighCard(std::vector<Card> &card);
+    static Card getNthHighCard(std::vector<Card> hand, int n);
+
 
     ranked_hand straightFlush(std::vector<Card> hand);
     ranked_hand fourKind(std::vector<Card> hand);
     ranked_hand fullHouse(std::vector<Card> hand);
     ranked_hand flush(std::vector<Card> hand);
+
     ranked_hand straight(std::vector<Card> hand);
     ranked_hand threeKind(std::vector<Card> hand);
     ranked_hand twoPair(std::vector<Card> hand);
     ranked_hand pair(std::vector<Card> hand);
     ranked_hand highCard(std::vector<Card> hand);
 
+
     ranked_hand best5CardHand(Player* player);
 
-    QMultiMap<ranked_hand, Player*> player_ranks;
+    //QMultiMap<ranked_hand, Player*> player_ranks;
 };
 
-bool operator==(std::vector<Card> &lhs, std::vector<Card> &rhs);
-bool operator>(std::vector<Card> &lhs, std::vector<Card> &rhs);
-bool operator>(Hand::ranked_hand &lhs, Hand::ranked_hand &rhs);
-
+bool operator>(const Card& lhs, const Card& rhs);
+bool operator==(const std::vector<Card> &lhs, const std::vector<Card> &rhs);
+bool operator>(const std::vector<Card> &lhs, const std::vector<Card> &rhs);
+bool operator>(const Hand::ranked_hand &lhs, const Hand::ranked_hand &rhs);
+std::ostream& operator<<(std::ostream& out, QVector<Card> &hand);
 
 #endif // HAND_H

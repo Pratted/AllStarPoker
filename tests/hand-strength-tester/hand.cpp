@@ -2,16 +2,23 @@
 #include "player.h"
 #include <algorithm>
 #include <unordered_map>
+#include <map>
 
-bool operator==(std::vector<Card> &a, std::vector<Card> &b){
-    for(int i = 0; i < std::min(a.size(), b.size()); i++){
-        if(a[i].rank() != b[i].rank()) return false;
+bool operator>(const Card& lhs, const Card& rhs){
+    return lhs.rank() > rhs.rank();
+}
+
+bool operator==(const std::vector<Card> &lhs, const std::vector<Card> &rhs){
+    if(lhs.size() != rhs.size()) return false;
+
+    for(int i = 0; i < lhs.size(); i++){
+        if(lhs[i].rank() != rhs[i].rank()) return false;
     }
 
     return true;
 }
 
-bool operator>(std::vector<Card> &a, std::vector<Card> &b){
+bool operator>(const std::vector<Card> &a, const std::vector<Card> &b){
     for(int i = 0; i < std::min(a.size(), b.size()); i++){
         if(a[i].rank() != b[i].rank()){
             return a[i].rank() > b[i].rank();
@@ -21,18 +28,38 @@ bool operator>(std::vector<Card> &a, std::vector<Card> &b){
 }
 
 
-bool operator>(Hand::ranked_hand &a, Hand::ranked_hand &b){
-    if(a.first == b.first){ //same hand type.
-        return a.second > b.second;
+bool operator>(const Hand::ranked_hand &a, const Hand::ranked_hand &b){
+    if(a.type == b.type){ //same hand type.
+        return a.hand > b.hand;
     }
     else{
-        return a.second > b.second;
+        return a.hand > b.hand;
     }
 }
 
-bool operator==(Hand::ranked_hand lhs , Hand::Type rhs){
-    return lhs.first == rhs;
+bool operator==(const Hand::ranked_hand &lhs , const Hand::Type &rhs){
+    return lhs.type == rhs;
 }
+
+std::ostream& operator<<(std::ostream& out, std::vector<Card> &hand){
+    out << "ids : ";
+    for(auto &c: hand){
+        out << c.id() << "\t";
+    }
+    out << "\nrank: ";
+    for(auto &c: hand){
+        out << c.rank() << "\t";
+    }
+    out << "\nsuit: ";
+    for(auto &c: hand){
+        out << c.suit() << "\t";
+    }
+    out << "\n";
+
+    return out;
+}
+
+
 
 Hand::ranked_hand Hand::emptyHand(){
     return ranked_hand(NONE, std::vector<Card> ());
@@ -46,8 +73,6 @@ Hand::Hand(QVector<Player*> players, Player* lead_better, int big_blind, int sma
 {
     prev_lead_better = nullptr;
 }
-
-
 
 bool Hand::hasSingleWinner(){
     return current_players.size() == 1;
@@ -84,6 +109,7 @@ std::vector<Card> Hand::build7CardHand(Card &c1, Card &c2){
     return hand;
 }
 
+
 Hand::ranked_hand Hand::best5CardHand(Player* player){
     auto hand = build7CardHand(player->card1, player->card2);
 
@@ -101,19 +127,21 @@ Hand::ranked_hand Hand::best5CardHand(Player* player){
 
 
 
-//sort by suit, then by rank in descending order.
-bool Hand::sort_flush(Card &a, Card &b){
-    if(a.suit() == b.suit()){
-        if(a.rank() == ACE_LOW) return true;
-        if(b.rank() == ACE_LOW) return false;
-        else return a.rank() > b.rank();
-    }
-    else{
-        if(a.rank() == ACE_LOW) return true;
-        if(b.rank() == ACE_LOW) return false;
-        else return a.rank() > b.rank();
-    }
+std::vector<Card> Hand::removeDuplicateRanks(std::vector<Card> hand){
+    auto it = std::unique(hand.begin(), hand.end(), [](const Card &a, const Card &b){
+        return a.rank() == b.rank();
+    });
+
+    hand.erase(it, hand.end());
+    return hand;
 }
+
+
+Card Hand::getNthHighCard(std::vector<Card> hand, int n){
+    std::sort(hand.begin(), hand.end(), sort_straight);
+    return hand[n];
+}
+
 
 //Sort descending order. With aces toward beginning.
 bool Hand::sort_straight(Card &a, Card &b){
@@ -121,6 +149,114 @@ bool Hand::sort_straight(Card &a, Card &b){
     if(b.rank() == ACE_LOW) return false;
    return a.rank() > b.rank();
 }
+
+bool Hand::is_ace_low(Card& a){
+    return a.rank() == ACE_LOW;
+}
+
+
+
+
+
+Hand::ranked_hand Hand::straightFlush(std::vector<Card> hand){
+    //std::sort(hand.begin(), hand.end(), sort_flush);
+    return emptyHand();
+}
+
+
+// Finds a four of a kind.
+//
+// The std::vector is ordered with the 4 kind, followed by the high card.
+//
+// i.e
+// {FOUR_KIND, {9,9,9,9,6}};
+ Hand::ranked_hand Hand::fourKind(std::vector<Card> hand){
+    std::map<int, int> counts;
+    std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
+
+    for(auto &card: hand){
+        counts[card.rank()]++;
+    }
+
+    for(auto &p: counts){
+        if(p.second == 4){
+            std::vector<Card> ans;
+
+            //remove the 4 kind of hand
+            hand.erase(hand.begin(), std::remove_if(hand.begin(), hand.end(),[&](const Card& c){
+                return c.rank() == p.first;
+            }));
+
+            std::fill_n(ans.begin(), 4, Card(p.first));
+
+            //search for the remaining high card.
+            ans.push_back(getNthHighCard(hand, 0));
+            return ranked_hand(FOUR_KIND, ans);
+        }
+    }
+
+    return emptyHand();
+}
+
+
+ Hand::ranked_hand Hand::fullHouse(std::vector<Card> hand){
+     std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
+
+     std::vector<Card> solution;
+     ranked_hand trips = threeKind(hand);
+
+     //include the 3 kind in this solution.
+     if(trips.type == THREE_KIND){
+         solution.insert(solution.begin(), trips.hand.begin(), trips.hand.begin() + 3);
+
+         //eliminate those 3 cards to make 4 card hand.
+         hand = std::vector<Card> (trips.hand.begin() + 3, trips.hand.end());
+     }
+
+     ranked_hand p = pair(hand);
+     if(p.type == PAIR){
+         solution.insert(solution.begin(), p.hand.begin(), p.hand.begin() + 2);
+     }
+
+     if(solution.size() == 5){
+         ranked_hand(FULL_HOUSE, solution);
+     }
+
+     return emptyHand();
+ }
+
+
+
+Hand::ranked_hand Hand::flush(std::vector<Card> hand){
+     std::map<int, int, std::greater<int>> counts;
+
+     for(auto &card: hand){
+         counts[card.rank()]++;
+     }
+
+     for(auto &p: counts){
+         if(p.second >= 5){
+             std::vector<Card> solution;
+
+             //place of cards of same suit into solution vector.
+             std::copy_if(hand.begin(), hand.end(), solution.begin(), [&](const Card& c){
+                return c.rank() == p.first;
+             });
+
+             std::sort(solution.begin(), solution.end(), sort_straight);
+
+             if(solution.front().rank() == ACE_LOW){
+                 solution[0].setRank(ACE_HIGH_RANK);
+             }
+
+             solution.resize(5);
+             return ranked_hand(FLUSH, solution);
+         }
+     }
+
+     return emptyHand();
+ }
+
 
 Hand::ranked_hand Hand::straight(std::vector<Card> hand){
     hand = removeDuplicateRanks(hand);
@@ -137,77 +273,103 @@ Hand::ranked_hand Hand::straight(std::vector<Card> hand){
     //there must be a straight since (remember dups are removed).
     for(int i = 0, j = 4; j < hand.size(); i++, j++){
         if(hand[i].rank() - hand[j].rank() == 4){
-            return ranked_hand(STRAIGHT, std::vector<Card> (hand.begin() + i, hand.begin() + j));
+            return ranked_hand(STRAIGHT, std::vector<Card> (hand.begin() + i, hand.begin() + j + 1));
         }
     }
 
     return ranked_hand(NONE, std::vector<Card>());
 }
 
-std::vector<Card> Hand::removeDuplicateRanks(std::vector<Card> hand){
-    auto it = std::unique(hand.begin(), hand.end(), [](const Card &a, const Card &b){
-        return a.rank() == b.rank();
-    });
 
-    hand.erase(it, hand.end());
-    return hand;
-}
+Hand::ranked_hand Hand::threeKind(std::vector<Card> hand){
+    //Store in descending order. If there are 2, 3kinds, the higher 3kind will
+    //been seen first when iterating through the map.
+    std::map<int, int, std::greater<int>> counts;
+    std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
 
-
-//get high card in the hand and remove it.
-Card Hand::getHighCard(std::vector<Card> &hand){
-    Card high_card = hand.front();
-
-    auto runner = hand.begin() + 1;
-    auto trailer = hand.begin();
-    auto to_erase = trailer;
-
-    while(runner != hand.end()){
-        if(runner->rank() == ACE_LOW){
-            high_card = *runner;
-            hand.erase(runner);
-            return high_card;
-        }
-        else if(runner->rank() > trailer->rank()){
-            high_card = *runner;
-            to_erase = runner;
-        }
-    }
-
-    hand.erase(to_erase);
-    return high_card;
-}
-
-
-
-Hand::ranked_hand Hand::straightFlush(std::vector<Card> hand){
-    std::sort(hand.begin(), hand.end(), sort_flush);
-    return emptyHand();
-}
-
-Hand::ranked_hand Hand::fourKind(std::vector<Card> hand){
-    std::unordered_map<int, int> counts;
     for(auto &card: hand){
         counts[card.rank()]++;
     }
 
     for(auto &p: counts){
-        if(p.second == 4){
-            if(p.first == ACE_LOW){
+        if(p.second >= 3){
+            std::vector<Card> ans;
 
-            }
+            //remove the 3kind from hand
+            hand.erase(hand.begin(), std::remove_if(hand.begin(), hand.end(),[&](const Card& c){
+                return c.rank() == p.first;
+            }));
 
+            std::fill_n(ans.begin(), 3, Card(p.first));
+
+            //search for the 2 remaining high cards.
+            ans.push_back(getNthHighCard(hand, 0));
+            ans.push_back(getNthHighCard(hand, 1));
+            return ranked_hand(THREE_KIND, ans);
         }
     }
 
     return emptyHand();
 }
+Hand::ranked_hand Hand::twoPair(std::vector<Card> hand){
+    std::map<int, int, std::greater<int>> counts;
+    std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
 
+    for(auto &card: hand){
+        counts[card.rank()]++;
+    }
 
-Hand::ranked_hand Hand::fullHouse(std::vector<Card> hand){return emptyHand();}
-Hand::ranked_hand Hand::flush(std::vector<Card> hand){return emptyHand();}
-Hand::ranked_hand Hand::threeKind(std::vector<Card> hand){return emptyHand();}
-Hand::ranked_hand Hand::twoPair(std::vector<Card> hand){return emptyHand();}
-Hand::ranked_hand Hand::pair(std::vector<Card> hand){return emptyHand();}
-Hand::ranked_hand Hand::highCard(std::vector<Card> hand){return emptyHand();}
+    std::vector<Card> ans;
+
+    for(auto &p: counts){
+        if(p.second >= 2){
+            //remove the pair from hand
+            hand.erase(hand.begin(), std::remove_if(hand.begin(), hand.end(),[&](const Card& c){
+                return c.rank() == p.first;
+            }));
+
+            std::fill_n(ans.begin(), 2, Card(p.first));
+        }
+
+        //ans will have size 4 when 2 pairs have been found. now get the high card.
+        if(ans.size() == 4){
+            ans.push_back(getNthHighCard(hand, 0));
+            return ranked_hand(TWO_PAIR, ans);
+        }
+    }
+
+    return emptyHand();
+}
+Hand::ranked_hand Hand::pair(std::vector<Card> hand){
+    std::map<int, int, std::greater<int>> counts;
+    std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
+
+    for(auto &card: hand){
+        counts[card.rank()]++;
+    }
+
+    std::vector<Card> ans;
+
+    for(auto &p: counts){
+        if(p.second >= 2){
+            //remove the pair from hand
+            hand.erase(hand.begin(), std::remove_if(hand.begin(), hand.end(),[&](const Card& c){
+                return c.rank() == p.first;
+            }));
+
+            std::fill_n(ans.begin(), 2, Card(p.second));
+            ans.push_back(getNthHighCard(hand, 0));
+            ans.push_back(getNthHighCard(hand, 1));
+            ans.push_back(getNthHighCard(hand, 2));
+            return ranked_hand(PAIR, ans);
+        }
+    }
+
+    return emptyHand();
+}
+Hand::ranked_hand Hand::highCard(std::vector<Card> hand){
+    std::sort(hand.begin(), hand.end(), sort_straight);
+    return ranked_hand(HIGH_CARD, std::vector<Card> (hand.begin(), hand.begin() + 5));
+}
+
 

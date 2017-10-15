@@ -2,11 +2,13 @@
 #include "ui_handstrengthtester.h"
 #include <random>
 #include <QVector>
+#include <QDebug>
 
 #include "player.h"
 
 HandStrengthTester::HandStrengthTester(int num_players, QWidget *parent) :
     QMainWindow(parent),
+    hand(nullptr),
     ui(new Ui::HandStrengthTester)
 {
     ui->setupUi(this);
@@ -24,7 +26,7 @@ HandStrengthTester::HandStrengthTester(int num_players, QWidget *parent) :
     players[2]->card1.setLabel(ui->player2_card1);
     players[2]->card2.setLabel(ui->player2_card2);
 
-    players[3]->card1.setLabel(ui->player3_card3);
+    players[3]->card1.setLabel(ui->player3_card1);
     players[3]->card2.setLabel(ui->player3_card2);
 
     players[4]->card1.setLabel(ui->player4_card1);
@@ -38,6 +40,8 @@ HandStrengthTester::HandStrengthTester(int num_players, QWidget *parent) :
 
     players[7]->card1.setLabel(ui->player7_card1);
     players[7]->card2.setLabel(ui->player7_card2);
+
+    connect(ui->button_test_again, &QPushButton::clicked, this, &HandStrengthTester::test);
 }
 
 HandStrengthTester::~HandStrengthTester()
@@ -60,15 +64,49 @@ HandStrengthTester::Dealer::Dealer(){
     std::shuffle(deck.begin(), deck.end(), rng);
 }
 
+void HandStrengthTester::showAllCards(){
+    for(auto &p: players){
+        p->card1.showFront();
+        p->card2.showFront();
+    }
 
+    hand->community.flop1.showFront();
+    hand->community.flop2.showFront();
+    hand->community.flop3.showFront();
+    hand->community.turn.showFront();
+    hand->community.river.showFront();
+
+}
 
 void HandStrengthTester::test(){
+    dealer = Dealer();
+    hand = new Hand(players, nullptr);
+
+    hand->community.flop1.setLabel(ui->card1);
+    hand->community.flop2.setLabel(ui->card2);
+    hand->community.flop3.setLabel(ui->card3);
+    hand->community.turn.setLabel(ui->card4);
+    hand->community.river.setLabel(ui->card5);
+
     for(auto &player: players){
-        player->card1 = Card(dealer.deck.back());
+        player->card1 = Card(dealer.deck.back(), player->card1.img());
         dealer.deck.pop_back();
 
-        player->card2 = Card(dealer.deck.back());
+        player->card2 = Card(dealer.deck.back(), player->card2.img());
         dealer.deck.pop_back();
     }
 
+    hand->community.flop1 = Card(dealer.deck.back(), ui->card1);
+    dealer.deck.pop_back();
+    hand->community.flop2 = Card(dealer.deck.back(), ui->card2);
+    dealer.deck.pop_back();
+    hand->community.flop3 = Card(dealer.deck.back(), ui->card3);
+    dealer.deck.pop_back();
+    hand->community.turn = Card(dealer.deck.back(), ui->card4);
+    dealer.deck.pop_back();
+    hand->community.river = Card(dealer.deck.back(), ui->card5);
+    dealer.deck.pop_back();
+
+    showAllCards();
+    delete hand;
 }

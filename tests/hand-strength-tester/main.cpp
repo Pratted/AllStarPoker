@@ -18,8 +18,10 @@ int main(int argc, char *argv[])
     }
 
     QApplication a(argc, argv);
-    HandStrengthTester w(players);
-    w.show();
+    HandStrengthTester hst(players);
+    hst.show();
+
+    hst.test();
 
     return a.exec();
 }

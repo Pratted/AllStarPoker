@@ -1,0 +1,11 @@
+#Ignore Qt Build Dirs
+src/build-*
+
+#Ignore user files.
+*.user
+*.o
+*.stash
+moc_*
+
+
+

@@ -782,6 +782,11 @@ moc_handstrengthtester.cpp: ../../../../Qt/5.9/gcc_64/include/QtWidgets/QMainWin
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qicon.h \
+		../hand-strength-tester/hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		../hand-strength-tester/card.h \
 		../hand-strength-tester/handstrengthtester.h \
 		moc_predefs.h \
 		../../../../Qt/5.9/gcc_64/bin/moc
@@ -910,6 +915,11 @@ main.o: ../hand-strength-tester/main.cpp ../hand-strength-tester/handstrengthtes
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qicon.h \
+		../hand-strength-tester/hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		../hand-strength-tester/card.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/QApplication \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qapplication.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1023,7 +1033,12 @@ handstrengthtester.o: ../hand-strength-tester/handstrengthtester.cpp ../hand-str
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qicon.h \
-		../hand-strength-tester/ui_handstrengthtester.h \
+		../hand-strength-tester/hand.h \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QVector \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMap \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		../hand-strength-tester/card.h \
+		ui_handstrengthtester.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/QVariant \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/QAction \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qaction.h \
@@ -1056,6 +1071,9 @@ handstrengthtester.o: ../hand-strength-tester/handstrengthtester.cpp ../hand-str
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qrubberband.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/QLabel \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qlabel.h \
+		../../../../Qt/5.9/gcc_64/include/QtWidgets/QPushButton \
+		../../../../Qt/5.9/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../../../Qt/5.9/gcc_64/include/QtWidgets/qabstractbutton.h \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/QTextEdit \
 		../../../../Qt/5.9/gcc_64/include/QtWidgets/qtextedit.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtextdocument.h \
@@ -1063,7 +1081,9 @@ handstrengthtester.o: ../hand-strength-tester/handstrengthtester.cpp ../hand-str
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtextcursor.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qtextformat.h \
 		../../../../Qt/5.9/gcc_64/include/QtGui/qpen.h \
-		../../../../Qt/5.9/gcc_64/include/QtWidgets/QWidget
+		../../../../Qt/5.9/gcc_64/include/QtWidgets/QWidget \
+		../../../../Qt/5.9/gcc_64/include/QtCore/QDebug \
+		../hand-strength-tester/player.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o handstrengthtester.o ../hand-strength-tester/handstrengthtester.cpp
 
 card.o: ../hand-strength-tester/card.cpp ../../../../Qt/5.9/gcc_64/include/QtGui/QImage \
@@ -1237,7 +1257,9 @@ hand.o: ../hand-strength-tester/hand.cpp ../hand-strength-tester/hand.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qcontiguouscache.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qsharedpointer.h \
 		../../../../Qt/5.9/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		../hand-strength-tester/card.h
+		../../../../Qt/5.9/gcc_64/include/QtCore/QMultiMap \
+		../hand-strength-tester/card.h \
+		../hand-strength-tester/player.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o hand.o ../hand-strength-tester/hand.cpp
 
 moc_handstrengthtester.o: moc_handstrengthtester.cpp 
