@@ -41,7 +41,7 @@ public slots:
     void authenticate(qintptr handle, QString payload);
     void sendExistingPlayers(qintptr handle);
     void forwardChatMessage(Packet& packet);
-    void readMove(qintptr handle, QString payload, bool timed_out = false);
+    void readMove(qintptr handle, QString payload);
     void prepareGameStart();
 
     void dealNewHand();

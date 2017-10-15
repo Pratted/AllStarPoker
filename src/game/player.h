@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <memory>
 
 #include "../globals.h"
 #include "card.h"
 #include "community.h"
+#include "hand.h"
 
 class Account;
 class Seat;
@@ -33,19 +35,18 @@ public:
     void displayChips();
 
     void startCountdownTimer();
-    void fold();
 
-    void bet(int amount);
-    void call(int amount);
+    void fold(std::unique_ptr<Hand> &hand);
+    void call(std::unique_ptr<Hand> &hand);
+    void bet(std::unique_ptr<Hand> &hand, int amount);
 
-    void check();
 private:
     const int id;
     int handle;
     QString name;
 
     int chips;
-    int hand_contribution;
+    //int hand_contribution;
     int round_contribution; //chips contributed this round (i.e. flop, turn, river).
     int timeouts;
 

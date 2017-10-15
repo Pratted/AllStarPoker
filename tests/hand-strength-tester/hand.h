@@ -3,6 +3,8 @@
 
 #include <QVector>
 #include <QMap>
+#include <QMultiMap>
+#include <vector>
 
 #include "card.h"
 class Player;
@@ -16,6 +18,10 @@ class Player;
  *
  * The hand is over when there one non-folded player left or
  * all of the betting rounds have been completed.
+ *
+ *
+ * Note std::vector is used instead of QVector since it supports
+ * iterator range constructors.
  *******************************************************************/
 class Hand {
 public:
@@ -63,8 +69,41 @@ public:
     bool hasSingleWinner(); //1 player left (1 AND ONLY 1 winner)
     bool hasRoundFinished(); //end of flop, turn, etc.
 
+    std::vector<Card> build7CardHand(Card &c1, Card &c2);
+
     void removePlayer(Player* player);
     void save(); //save hand statistics in database.
+
+    enum Type {NONE, HIGH_CARD, PAIR, TWO_PAIR, THREE_KIND, STRAIGHT, FLUSH, FULL_HOUSE, FOUR_KIND, STRAIGHT_FLUSH};
+
+    typedef std::pair<Hand::Type, std::vector<Card>> ranked_hand;
+    static Hand::ranked_hand emptyHand();
+private:
+
+    static bool sort_flush(Card &a, Card &b);
+    static bool sort_straight(Card &a, Card &b);
+
+    static std::vector<Card> removeDuplicateRanks(std::vector<Card> hand);
+    static Card getHighCard(std::vector<Card> &card);
+
+    ranked_hand straightFlush(std::vector<Card> hand);
+    ranked_hand fourKind(std::vector<Card> hand);
+    ranked_hand fullHouse(std::vector<Card> hand);
+    ranked_hand flush(std::vector<Card> hand);
+    ranked_hand straight(std::vector<Card> hand);
+    ranked_hand threeKind(std::vector<Card> hand);
+    ranked_hand twoPair(std::vector<Card> hand);
+    ranked_hand pair(std::vector<Card> hand);
+    ranked_hand highCard(std::vector<Card> hand);
+
+    ranked_hand best5CardHand(Player* player);
+
+    QMultiMap<ranked_hand, Player*> player_ranks;
 };
+
+bool operator==(std::vector<Card> &lhs, std::vector<Card> &rhs);
+bool operator>(std::vector<Card> &lhs, std::vector<Card> &rhs);
+bool operator>(Hand::ranked_hand &lhs, Hand::ranked_hand &rhs);
+
 
 #endif // HAND_H

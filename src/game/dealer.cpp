@@ -202,7 +202,9 @@ Player* Dealer::findNextPlayer(Player* current_player){
     int seat = current_player->id;
     int id = current_player->id;
 
-    auto it = std::find_if(game->players.begin(), game->players.end(), [id](const Player* p){return p->id == id;});
+    auto it = std::find_if(game->players.begin(), game->players.end(), [id](const Player* p){
+        return p->id == id;
+    });
     auto original = it;
 
     do {
@@ -238,37 +240,62 @@ void Dealer::forceFold(){
     game->player_timer.blockSignals(true);
     game->player_timer.stop();
 
-    current_player->move = Player::FOLD;
+    current_player->fold(hand);
     current_player->timeouts++;
 
-    game->player_timer.blockSignals(false);
     game->player_timer.start(game->timer_duration);
+    game->player_timer.blockSignals(false);
 }
 
-void Dealer::readMove(qintptr handle, QString payload, bool timed_out){
+void Dealer::readMove(qintptr handle, QString payload){
     int id = handle_seats[handle];
     Player* player = findPlayerById(id);
 
-    if(!timed_out){
-        player->timeouts = 0; //reset timeouts.
+    game->player_timer.blockSignals(true);
+    game->player_timer.stop(); //stop timer; prevent player from timing out.
+
+    if(player->id != current_player->id){
+        qDebug() << "ERROR LOST TRACK OF CURRENT PLAYER.";
     }
 
-    game->player_timer.stop(); //stop timer; prevent player from timing out.
+    player->timeouts = 0;
+
     qDebug() << "Player " << id << " has " << payload << endl;
 
-    Player::Move move = Player::Move(payload.toInt());
+    Player::Move move = Player::Move(payload.split(',')[0].toInt());
+
+    int amount = 0;
+    if(payload.split(",").size() > 1){
+        amount = payload.split(",")[1].toInt();
+    }
+
+    int amount_to_call = hand->community.current_bet - player->round_contribution;
+    int raise = amount - amount_to_call;
 
     switch (move){
     case Player::FOLD:
-        player->move = Player::FOLD;
+        player->fold(hand);
+        messageAll(Packet(Packet::Opcode::C2S_MESSAGE, player->name + " folded."));
         break;
     case Player::CALL:
-        player->move = Player::CALL;
-        //player->chips -= community.current_bet - player->round_contribution;
+        player->call(hand);
+        messageAll(Packet(Packet::Opcode::C2S_MESSAGE, player->name + " called " + formatWithComma(amount_to_call)));
         break;
     case Player::BET:
-
+        player->bet(hand, amount);
+        //messageAll(Packet(Packet::Opcode::C2S_MESSAGE, player->name + " folded."));
         break;
+    }
+
+    if(hand->hasSingleWinner()){
+        //distribute winnings.
+        // prepare next hand.
+    }
+
+    current_player = findNextPlayer(player);
+
+    if(hand->hasRoundFinished()){
+
     }
 }
 
@@ -300,13 +327,12 @@ Player* Dealer::findButton(){
  *
 */
 void Dealer::dealNewHand(){
+    game->next_hand_timer.blockSignals(true);
+    game->next_hand_timer.stop();
     std::cout << "Game: " << game << std::endl;
-    //game->next_hand_timer.stop();
     std::cout << "Dealing new hand...";
 
     this->shuffle();
-
-    std::cout << "Shuffled deck.\n";
     //remove cards from back of deck and give to player.
     for(auto &player: game->players){
         std::cout << "Dealing player ";
@@ -326,11 +352,9 @@ void Dealer::dealNewHand(){
     //button will be nullptr for first game; initialize it.
     if(!button) button = findButton();
 
-    std::cout << "Updating positional pointers.\n";
     //update positional pointers.
     button = findNextPlayer(button);
 
-    std::cout << "Set button.\n";
     small_blind = findNextPlayer(button);
     big_blind = findNextPlayer(small_blind);
     lead_better = findNextPlayer(big_blind);
@@ -347,11 +371,9 @@ void Dealer::dealNewHand(){
     Packet outgoing2(Packet::Opcode::S2C_BLINDS, blinds);
     messageAll(outgoing2);
 
-
-    //start timer for next player.
+    //start timer for current player.
     game->player_timer.start(game->timer_duration);
     game->player_timer.blockSignals(false);
-    qDebug() << "Strted player timer for " << game->timer_duration;
 
     //start of hand -> current_player is the lead better.
     current_player = lead_better;
@@ -376,11 +398,3 @@ QVector<Card> Dealer::newDeck(){
     return deck;
 }
 
-
-
-/*
-bool Dealer::isSplitPot(){
-
-    return true;
-}
-*/
