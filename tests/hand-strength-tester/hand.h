@@ -3,11 +3,13 @@
 
 #include <QVector>
 #include <QMap>
-#include <QMultiMap>
+#include <map>
 #include <vector>
 
 #include "card.h"
 class Player;
+class QLabel;
+
 
 
 /********************************************************************
@@ -71,25 +73,36 @@ public:
 
     std::vector<Card> build7CardHand(Card &c1, Card &c2);
 
+    QVector<Player*> getHandWinners(QLabel* label = nullptr);
+
     void removePlayer(Player* player);
     void save(); //save hand statistics in database.
 
     enum Type {NONE, HIGH_CARD, PAIR, TWO_PAIR, THREE_KIND, STRAIGHT, FLUSH, FULL_HOUSE, FOUR_KIND, STRAIGHT_FLUSH};
 
+
+
     struct ranked_hand {
-        ranked_hand(Hand::Type type, std::vector<Card> hand):type(type), hand(hand){}
+        ranked_hand(Hand::Type type, std::vector<Card> hand);
+        bool operator()(const Hand::ranked_hand& a, const Hand::ranked_hand &b) const;
+
         Hand::Type type;
         std::vector<Card> hand;
     };
 
+    ranked_hand best5CardHand(Player* player);
+
+    static QString toString(Hand::ranked_hand hand);
+    static QString toString(std::vector<Card> hand);
     static Hand::ranked_hand emptyHand();
-private:
+
+    //should be private....
     static bool sort_straight(Card &a, Card &b);
     static bool is_ace_low(Card& a);
 
+
     static std::vector<Card> removeDuplicateRanks(std::vector<Card> hand);
     static Card getNthHighCard(std::vector<Card> hand, int n);
-
 
     ranked_hand straightFlush(std::vector<Card> hand);
     ranked_hand fourKind(std::vector<Card> hand);
@@ -101,17 +114,17 @@ private:
     ranked_hand twoPair(std::vector<Card> hand);
     ranked_hand pair(std::vector<Card> hand);
     ranked_hand highCard(std::vector<Card> hand);
-
-
-    ranked_hand best5CardHand(Player* player);
-
-    //QMultiMap<ranked_hand, Player*> player_ranks;
+private:
+    std::map<Hand::ranked_hand, QVector<Player*>, std::greater<Hand::ranked_hand>> ranks;
 };
 
 bool operator>(const Card& lhs, const Card& rhs);
 bool operator==(const std::vector<Card> &lhs, const std::vector<Card> &rhs);
 bool operator>(const std::vector<Card> &lhs, const std::vector<Card> &rhs);
 bool operator>(const Hand::ranked_hand &lhs, const Hand::ranked_hand &rhs);
-std::ostream& operator<<(std::ostream& out, QVector<Card> &hand);
+std::ostream& operator<<(std::ostream& out, std::vector<Card> &hand);
+std::ostream& operator<<(std::ostream& out, Hand::ranked_hand &hand);
+
+
 
 #endif // HAND_H

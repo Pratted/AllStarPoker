@@ -102,6 +102,11 @@ void Card::setRank(int rank){
     _rank = rank;
 }
 
+void Card::setSuit(Suit suit){
+    _suit = suit;
+}
+
+
 void Card::setLabel(QLabel *label){
     _img = label;
 }

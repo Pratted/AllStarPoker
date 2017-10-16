@@ -42,6 +42,7 @@ public:
     void setId(int id);
     void setLabel(QLabel* label);
     void setRank(int rank);
+    void setSuit(Suit suit);
 
     static QImage card_sheet;
 private:

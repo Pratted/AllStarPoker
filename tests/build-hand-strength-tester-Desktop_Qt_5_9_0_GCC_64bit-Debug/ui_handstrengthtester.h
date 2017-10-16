@@ -17,7 +17,6 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -43,14 +42,6 @@ public:
     QLabel *player6_card1;
     QLabel *player7_card2;
     QLabel *player7_card1;
-    QTextEdit *player0;
-    QTextEdit *player1;
-    QTextEdit *player2;
-    QTextEdit *player3;
-    QTextEdit *player7;
-    QTextEdit *player6;
-    QTextEdit *player5;
-    QTextEdit *player4;
     QLabel *card1;
     QLabel *card4;
     QLabel *card3;
@@ -58,6 +49,14 @@ public:
     QLabel *card5;
     QLabel *description;
     QPushButton *button_test_again;
+    QLabel *player0;
+    QLabel *player1;
+    QLabel *player2;
+    QLabel *player3;
+    QLabel *player7;
+    QLabel *player6;
+    QLabel *player4;
+    QLabel *player5;
 
     void setupUi(QMainWindow *HandStrengthTester)
     {
@@ -134,30 +133,6 @@ public:
         player7_card1->setObjectName(QStringLiteral("player7_card1"));
         player7_card1->setGeometry(QRect(760, 390, 44, 63));
         player7_card1->setPixmap(QPixmap(QString::fromUtf8("../images/cardDeck.png")));
-        player0 = new QTextEdit(centralWidget);
-        player0->setObjectName(QStringLiteral("player0"));
-        player0->setGeometry(QRect(60, 70, 31, 41));
-        player1 = new QTextEdit(centralWidget);
-        player1->setObjectName(QStringLiteral("player1"));
-        player1->setGeometry(QRect(60, 180, 31, 41));
-        player2 = new QTextEdit(centralWidget);
-        player2->setObjectName(QStringLiteral("player2"));
-        player2->setGeometry(QRect(60, 290, 31, 41));
-        player3 = new QTextEdit(centralWidget);
-        player3->setObjectName(QStringLiteral("player3"));
-        player3->setGeometry(QRect(60, 400, 31, 41));
-        player7 = new QTextEdit(centralWidget);
-        player7->setObjectName(QStringLiteral("player7"));
-        player7->setGeometry(QRect(900, 400, 31, 41));
-        player6 = new QTextEdit(centralWidget);
-        player6->setObjectName(QStringLiteral("player6"));
-        player6->setGeometry(QRect(900, 290, 31, 41));
-        player5 = new QTextEdit(centralWidget);
-        player5->setObjectName(QStringLiteral("player5"));
-        player5->setGeometry(QRect(900, 180, 31, 41));
-        player4 = new QTextEdit(centralWidget);
-        player4->setObjectName(QStringLiteral("player4"));
-        player4->setGeometry(QRect(900, 70, 31, 41));
         card1 = new QLabel(centralWidget);
         card1->setObjectName(QStringLiteral("card1"));
         card1->setGeometry(QRect(370, 220, 44, 63));
@@ -181,9 +156,51 @@ public:
         description = new QLabel(centralWidget);
         description->setObjectName(QStringLiteral("description"));
         description->setGeometry(QRect(330, 370, 371, 131));
+        description->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 20px;"));
         button_test_again = new QPushButton(centralWidget);
         button_test_again->setObjectName(QStringLiteral("button_test_again"));
         button_test_again->setGeometry(QRect(810, 490, 151, 23));
+        player0 = new QLabel(centralWidget);
+        player0->setObjectName(QStringLiteral("player0"));
+        player0->setGeometry(QRect(20, 60, 131, 51));
+        player0->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player1 = new QLabel(centralWidget);
+        player1->setObjectName(QStringLiteral("player1"));
+        player1->setGeometry(QRect(20, 170, 131, 51));
+        player1->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player2 = new QLabel(centralWidget);
+        player2->setObjectName(QStringLiteral("player2"));
+        player2->setGeometry(QRect(20, 280, 131, 51));
+        player2->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player3 = new QLabel(centralWidget);
+        player3->setObjectName(QStringLiteral("player3"));
+        player3->setGeometry(QRect(20, 390, 131, 51));
+        player3->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player7 = new QLabel(centralWidget);
+        player7->setObjectName(QStringLiteral("player7"));
+        player7->setGeometry(QRect(880, 390, 131, 51));
+        player7->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player6 = new QLabel(centralWidget);
+        player6->setObjectName(QStringLiteral("player6"));
+        player6->setGeometry(QRect(880, 270, 131, 51));
+        player6->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player4 = new QLabel(centralWidget);
+        player4->setObjectName(QStringLiteral("player4"));
+        player4->setGeometry(QRect(880, 60, 131, 51));
+        player4->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
+        player5 = new QLabel(centralWidget);
+        player5->setObjectName(QStringLiteral("player5"));
+        player5->setGeometry(QRect(880, 160, 131, 51));
+        player5->setStyleSheet(QLatin1String("color: white;\n"
+"font-size: 16px;"));
         HandStrengthTester->setCentralWidget(centralWidget);
 
         retranslateUi(HandStrengthTester);
@@ -211,53 +228,21 @@ public:
         player6_card1->setText(QString());
         player7_card2->setText(QString());
         player7_card1->setText(QString());
-        player0->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">0</span></p></body></html>", Q_NULLPTR));
-        player1->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">1</span></p></body></html>", Q_NULLPTR));
-        player2->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">2</span></p></body></html>", Q_NULLPTR));
-        player3->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">3</span></p></body></html>", Q_NULLPTR));
-        player7->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">7</span></p></body></html>", Q_NULLPTR));
-        player6->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">6</span></p></body></html>", Q_NULLPTR));
-        player5->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">5</span></p></body></html>", Q_NULLPTR));
-        player4->setHtml(QApplication::translate("HandStrengthTester", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:20pt;\">4</span></p></body></html>", Q_NULLPTR));
         card1->setText(QString());
         card4->setText(QString());
         card3->setText(QString());
         card2->setText(QString());
         card5->setText(QString());
-        description->setText(QApplication::translate("HandStrengthTester", "TextLabel", Q_NULLPTR));
+        description->setText(QString());
         button_test_again->setText(QApplication::translate("HandStrengthTester", "Test Again", Q_NULLPTR));
+        player0->setText(QString());
+        player1->setText(QString());
+        player2->setText(QString());
+        player3->setText(QString());
+        player7->setText(QString());
+        player6->setText(QString());
+        player4->setText(QString());
+        player5->setText(QString());
     } // retranslateUi
 
 };

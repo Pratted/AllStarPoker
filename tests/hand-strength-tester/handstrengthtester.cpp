@@ -3,8 +3,10 @@
 #include <random>
 #include <QVector>
 #include <QDebug>
+#include <iostream>
 
 #include "player.h"
+#include "hand.h"
 
 HandStrengthTester::HandStrengthTester(int num_players, QWidget *parent) :
     QMainWindow(parent),
@@ -14,32 +16,40 @@ HandStrengthTester::HandStrengthTester(int num_players, QWidget *parent) :
     ui->setupUi(this);
 
     for(int i = 0; i < 8; i++){
-        this->players.push_back(new Player);
+        this->players.push_back(new Player(i));
     }
 
     players[0]->card1.setLabel(ui->player0_card1);
     players[0]->card2.setLabel(ui->player0_card2);
+    players[0]->label = ui->player0;
 
     players[1]->card1.setLabel(ui->player1_card1);
     players[1]->card2.setLabel(ui->player1_card2);
+    players[1]->label = ui->player1;
 
     players[2]->card1.setLabel(ui->player2_card1);
     players[2]->card2.setLabel(ui->player2_card2);
+    players[2]->label = ui->player2;
 
     players[3]->card1.setLabel(ui->player3_card1);
     players[3]->card2.setLabel(ui->player3_card2);
+    players[3]->label = ui->player3;
 
     players[4]->card1.setLabel(ui->player4_card1);
     players[4]->card2.setLabel(ui->player4_card2);
+    players[4]->label = ui->player4;
 
     players[5]->card1.setLabel(ui->player5_card1);
     players[5]->card2.setLabel(ui->player5_card2);
+    players[5]->label = ui->player5;
 
     players[6]->card1.setLabel(ui->player6_card1);
     players[6]->card2.setLabel(ui->player6_card2);
+    players[6]->label = ui->player6;
 
     players[7]->card1.setLabel(ui->player7_card1);
     players[7]->card2.setLabel(ui->player7_card2);
+    players[7]->label = ui->player7;
 
     connect(ui->button_test_again, &QPushButton::clicked, this, &HandStrengthTester::test);
 }
@@ -106,7 +116,38 @@ void HandStrengthTester::test(){
     dealer.deck.pop_back();
     hand->community.river = Card(dealer.deck.back(), ui->card5);
     dealer.deck.pop_back();
+    std::cout << "---------------------------- New Hand ---------------------------!\n";
 
+
+    for(auto &player: players){
+        Hand::ranked_hand player_hand = hand->best5CardHand(player);
+        QString desc = Hand::toString(player_hand) + "\n";
+
+        for(auto &c: player_hand.hand){
+            desc += QString::number(c.rank()) + " ";
+        }
+        player->label->setText(desc);
+        std::cout << player_hand.hand;
+    }
+
+    hand->getHandWinners(ui->description);
+
+
+    /*
+    std::vector<Card> cards;
+    cards.push_back(Card(2));
+    cards.push_back(Card(3));
+    cards.push_back(Card(4));
+    cards.push_back(Card(5));
+    cards.push_back(Card(6));
+    cards.push_back(Card(0));
+    cards.push_back(Card(1));
+    std::cout << "Before: \n";
+    std::cout << cards << std::endl;
+    auto ranked_hand = hand->straightFlush(cards);
+    std::cout << "After: \n";
+    std::cout << ranked_hand.hand << std::endl;
+    */
     showAllCards();
     delete hand;
 }

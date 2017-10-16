@@ -3,7 +3,12 @@
 
 #include "card.h"
 
+class QLabel;
 struct Player {
+    Player(int id = 0):id(id){}
+
+    QLabel* label;
+    int id;
     Card card1;
     Card card2;
 };
