@@ -1,11 +1,11 @@
 #Ignore Qt Build Dirs
-src/build-*
+build-*
 
 #Ignore user files.
 *.user
 *.o
 *.stash
 moc_*
-
+Makefile
 
 
