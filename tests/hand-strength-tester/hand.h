@@ -97,9 +97,8 @@ public:
     static Hand::ranked_hand emptyHand();
 
     //should be private....
-    static bool sort_straight(Card &a, Card &b);
+    static bool sort_rank_desc(Card &a, Card &b);
     static bool is_ace_low(Card& a);
-
 
     static std::vector<Card> removeDuplicateRanks(std::vector<Card> hand);
     static Card getNthHighCard(std::vector<Card> hand, int n);

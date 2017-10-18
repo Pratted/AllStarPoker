@@ -85,11 +85,16 @@ void HandStrengthTester::showAllCards(){
     hand->community.flop3.showFront();
     hand->community.turn.showFront();
     hand->community.river.showFront();
-
 }
+
 
 void HandStrengthTester::test(){
     dealer = Dealer();
+    //if(!deck.isEmpty()){
+    //    dealer.deck = deck;
+    //}
+
+
     hand = new Hand(players, nullptr);
 
     hand->community.flop1.setLabel(ui->card1);
@@ -97,6 +102,8 @@ void HandStrengthTester::test(){
     hand->community.flop3.setLabel(ui->card3);
     hand->community.turn.setLabel(ui->card4);
     hand->community.river.setLabel(ui->card5);
+
+
 
     for(auto &player: players){
         player->card1 = Card(dealer.deck.back(), player->card1.img());
@@ -116,6 +123,7 @@ void HandStrengthTester::test(){
     dealer.deck.pop_back();
     hand->community.river = Card(dealer.deck.back(), ui->card5);
     dealer.deck.pop_back();
+
     std::cout << "---------------------------- New Hand ---------------------------!\n";
 
 
@@ -131,7 +139,6 @@ void HandStrengthTester::test(){
     }
 
     hand->getHandWinners(ui->description);
-
 
     /*
     std::vector<Card> cards;

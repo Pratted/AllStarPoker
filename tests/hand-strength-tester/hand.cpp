@@ -146,6 +146,15 @@ void Hand::removePlayer(Player *player){
     player_potential_winnings.remove(player);
 }
 
+
+/**********************************************************************
+Hand::build7CardHand
+
+Helper function for Hand::best5CardHand.
+
+Builds a 7 card hand by copying the community and appending the players
+cards.
+**********************************************************************/
 std::vector<Card> Hand::build7CardHand(Card &c1, Card &c2){
     std::vector<Card> hand;
 
@@ -161,6 +170,14 @@ std::vector<Card> Hand::build7CardHand(Card &c1, Card &c2){
 }
 
 
+/**********************************************************************
+Hand::best5CardHand
+
+Constructs the best possible Hand::ranked_hand for a player.
+
+Uses a greedy approach by checking from strongest to weakest hands.
+Returns the first match.
+**********************************************************************/
 Hand::ranked_hand Hand::best5CardHand(Player* player){
     std::cout << "Player: " << player->id << std::endl;
     auto hand = build7CardHand(player->card1, player->card2);
@@ -175,41 +192,40 @@ Hand::ranked_hand Hand::best5CardHand(Player* player){
     if(pair(hand) == PAIR) return pair(hand);
     if(highCard(hand) == HIGH_CARD) return highCard(hand);
 
+    //error
     return emptyHand();
 }
 
+/**********************************************************************
+Hand::getNthHighCard
 
-
-std::vector<Card> Hand::removeDuplicateRanks(std::vector<Card> hand){
-    std::sort(hand.begin(), hand.end(), sort_straight);
-    auto it = std::unique(hand.begin(), hand.end(), [](const Card &a, const Card &b){
-        return a.rank() == b.rank();
-    });
-
-    hand.erase(it, hand.end());
-    return hand;
-}
-
-
+Sorts hand in descending order and returns the n'th index from the
+beginning. HIGH ACES should already be in hand.
+**********************************************************************/
 Card Hand::getNthHighCard(std::vector<Card> hand, int n){
-    std::sort(hand.begin(), hand.end(), sort_straight);
+    std::sort(hand.begin(), hand.end(), sort_rank_desc);
     return hand[n];
 }
 
+/**********************************************************************
+Hand::sort_rank_desc
 
-
-
-//Predicate for std::sort(begin,end,predicate)
-//sort cards in descending order of rank.
-bool Hand::sort_straight(Card &a, Card &b){
+Predicate for std::sort(begin,end,predicate)
+sort cards in descending order of rank.
+**********************************************************************/
+bool Hand::sort_rank_desc(Card &a, Card &b){
    return a.rank() > b.rank();
 }
 
-//Predicate for std::replace_if(begin,end,predicate,replacement)
+
+/**********************************************************************
+Hand::is_ace_low
+
+Predicate for std::replace_if(begin,end,predicate,replacement)
+**********************************************************************/
 bool Hand::is_ace_low(Card& a){
     return a.rank() == ACE_LOW;
 }
-
 
 QVector<Player*> Hand::getHandWinners(QLabel* label){
     ranks.clear();
@@ -236,7 +252,20 @@ QVector<Player*> Hand::getHandWinners(QLabel* label){
 }
 
 
+/**********************************************************************
+Hand::straightFlush
 
+Uses a map to count the number of occurances of each rank, but stores
+the cards as the value in key-value pair to preserve the rank. If 5 or
+more cards are in a key-value pair, the value (std::vector<Card>), is
+passed to Hand::straight to check for a straight. If the call returns
+a Hand::Straight, then there is straight flush since those cards also
+made up a flush in the intial analysis.
+
+**Note we can't call Hand::flush here because it returns the 5 highest
+ranks that make up a flush. The 5 highest ranks of a flush do not
+nessecarily make up the straight flush if there is one.
+**********************************************************************/
 Hand::ranked_hand Hand::straightFlush(std::vector<Card> hand){
     //group cards by suit.
     std::map<int, std::vector<Card>> counts;
@@ -261,12 +290,13 @@ Hand::ranked_hand Hand::straightFlush(std::vector<Card> hand){
 }
 
 
-// Finds a four of a kind.
-//
-// The std::vector is ordered with the 4 kind, followed by the high card.
-//
-// i.e
-// {FOUR_KIND, {9,9,9,9,6}};
+/**********************************************************************
+Hand::fourKind
+
+Uses a map to count the number of occurances of each rank. If 4
+occurances are found, those 4 cards + next highest card is returned
+in Hand::ranked_hand.
+**********************************************************************/
  Hand::ranked_hand Hand::fourKind(std::vector<Card> hand){
     std::map<int, int> counts;
     std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
@@ -295,8 +325,15 @@ Hand::ranked_hand Hand::straightFlush(std::vector<Card> hand){
     return emptyHand();
 }
 
+/**********************************************************************
+Hand::fullHouse
 
- Hand::ranked_hand Hand::fullHouse(std::vector<Card> hand){
+Calls Hand::threeKind to get the high 3kind if there is one. If there
+is a 3kind, those 3 cards are removed and the leftover 4 card hand is
+passed to Hand::pair to get the highest remaining pair. If both calls
+return 3 and 2 cards, combine them and return as Hand::ranked_hand.
+**********************************************************************/
+Hand::ranked_hand Hand::fullHouse(std::vector<Card> hand){
      std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
 
      std::vector<Card> solution;
@@ -321,6 +358,15 @@ Hand::ranked_hand Hand::straightFlush(std::vector<Card> hand){
      return emptyHand();
  }
 
+
+/**********************************************************************
+Hand::flush
+
+Maps each suit to the number of occurances of said suit. When there
+are 5 or more cards of same suit, those cards are placed in a vector
+and then sorted into descending order since. The first 5 cards are used
+to return a Hand::ranked_hand.
+**********************************************************************/
 Hand::ranked_hand Hand::flush(std::vector<Card> hand){
      std::map<int, int, std::greater<int>> counts;
 
@@ -337,7 +383,7 @@ Hand::ranked_hand Hand::flush(std::vector<Card> hand){
                 return c.suit() == p.first;
              });
 
-             std::sort(solution.begin(), solution.end(), sort_straight);
+             std::sort(solution.begin(), solution.end(), sort_rank_desc);
 
              //insert a high ace in beginning if there's an ace.
              if(solution.back().rank() == ACE_LOW){
@@ -352,20 +398,40 @@ Hand::ranked_hand Hand::flush(std::vector<Card> hand){
      return emptyHand();
  }
 
+/**********************************************************************
+Hand::straight
 
+
+Stores all 3kinds in a map ordered by rank of the 3kind. Uses the
+highest 3kind the map along with the additional 2 high cards to
+construct Hand::ranked_hand.
+**********************************************************************/
 Hand::ranked_hand Hand::straight(std::vector<Card> hand){
-    hand = removeDuplicateRanks(hand);
+    std::sort(hand.begin(), hand.end(), sort_rank_desc); //sort descending
 
-    std::sort(hand.begin(), hand.end(), sort_straight);
+    //iterator one past all unique pairs.
+    auto it = std::unique(hand.begin(), hand.end(), [](const Card &a, const Card &b){
+        return a.rank() == b.rank();
+    });
 
-    //isnert a high ace to check for high end straight.
+    //remove all duplicates to make the hand contain unique ranks.
+    hand.erase(it, hand.end());
+
+    //insert a high ace to check for high end straight.
     if(hand.back().rank() == ACE_LOW){
         hand.insert(hand.begin(),Card(ACE_HIGH));
         hand[0].setRank(13);
     }
 
-    //if two cards 5 cards apart have a difference of 4, then
-    //there must be a straight since (remember dups are removed).
+    /************************************************************
+    Use sliding window to check for straight.
+
+                9 8 7 6 5 3 1
+                ^_______^
+
+    If two cards 5 cards apart have a difference in rank of 4,
+    then there's a straight. (remember there are no duplicates)
+    *************************************************************/
     for(int i = 0, j = 4; j < hand.size(); i++, j++){
         if(hand[i].rank() - hand[j].rank() == 4){
             return ranked_hand(STRAIGHT, std::vector<Card> (hand.begin() + i, hand.begin() + j + 1));
@@ -375,7 +441,13 @@ Hand::ranked_hand Hand::straight(std::vector<Card> hand){
     return emptyHand();
 }
 
+/**********************************************************************
+Hand::threeKind
 
+Stores all 3kinds in a map ordered by rank of the 3kind. Uses the
+highest 3kind the map along with the additional 2 high cards to
+construct Hand::ranked_hand.
+**********************************************************************/
 Hand::ranked_hand Hand::threeKind(std::vector<Card> hand){
     //Store in descending order. If there are 2, 3kinds, the higher 3kind will
     //been seen first when iterating through the map.
@@ -408,6 +480,15 @@ Hand::ranked_hand Hand::threeKind(std::vector<Card> hand){
 
     return emptyHand();
 }
+
+
+/**********************************************************************
+Hand::twoPair
+
+Stores all pairs in hand in map ordered by rank of pair. Uses the
+two highest pairs (first two entries in map) and high card to
+construct Hand::ranked_hand.
+**********************************************************************/
 Hand::ranked_hand Hand::twoPair(std::vector<Card> hand){
     std::map<int, int, std::greater<int>> counts;
     std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
@@ -442,6 +523,13 @@ Hand::ranked_hand Hand::twoPair(std::vector<Card> hand){
 
     return emptyHand();
 }
+
+/**********************************************************************
+Hand::pair
+
+Searches for the first and only one pair in hand. Appends the 3 highest
+remaining cards to Hand::ranked_hand.
+**********************************************************************/
 Hand::ranked_hand Hand::pair(std::vector<Card> hand){
     std::map<int, int, std::greater<int>> counts;
     std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
@@ -472,8 +560,16 @@ Hand::ranked_hand Hand::pair(std::vector<Card> hand){
 
     return emptyHand();
 }
+
+/**********************************************************************
+Hand::highCard
+
+Sorts the 7 card hand in descender orders. Returns a Hand::ranked_hand
+first 5 of highest cards.
+**********************************************************************/
 Hand::ranked_hand Hand::highCard(std::vector<Card> hand){
-    std::sort(hand.begin(), hand.end(), sort_straight);
+    std::replace_if(hand.begin(), hand.end(), is_ace_low, Card(ACE_HIGH));
+    std::sort(hand.begin(), hand.end(), sort_rank_desc);
     return ranked_hand(HIGH_CARD, std::vector<Card> (hand.begin(), hand.begin() + 5));
 }
 

@@ -53,7 +53,6 @@ private:
     QLabel* _img = nullptr;
     QImage* card_front = nullptr;
     QImage* card_back = nullptr;
-    //QImage* card_sheet = nullptr;
 };
 
 #endif
