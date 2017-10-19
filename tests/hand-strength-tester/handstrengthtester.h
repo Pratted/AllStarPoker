@@ -16,7 +16,7 @@ class HandStrengthTester : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit HandStrengthTester(int players, QWidget *parent = 0);
+    HandStrengthTester(int players, QWidget *parent = 0);
 
     class Dealer {
       public:
@@ -28,6 +28,7 @@ public:
 
     void showAllCards();
     void test();
+    void test_custom(QVector<int> &cards);
 
     ~HandStrengthTester();
 

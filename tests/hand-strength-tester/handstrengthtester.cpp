@@ -1,10 +1,11 @@
-#include "handstrengthtester.h"
-#include "ui_handstrengthtester.h"
-#include <random>
 #include <QVector>
 #include <QDebug>
 #include <iostream>
+#include <string>
+#include <random>
 
+#include "handstrengthtester.h"
+#include "ui_handstrengthtester.h"
 #include "player.h"
 #include "hand.h"
 
@@ -90,10 +91,6 @@ void HandStrengthTester::showAllCards(){
 
 void HandStrengthTester::test(){
     dealer = Dealer();
-    //if(!deck.isEmpty()){
-    //    dealer.deck = deck;
-    //}
-
 
     hand = new Hand(players, nullptr);
 
@@ -124,7 +121,7 @@ void HandStrengthTester::test(){
     hand->community.river = Card(dealer.deck.back(), ui->card5);
     dealer.deck.pop_back();
 
-    std::cout << "---------------------------- New Hand ---------------------------!\n";
+    std::cout << "---------------------------- New Hand ---------------------------\n";
 
 
     for(auto &player: players){
@@ -140,21 +137,55 @@ void HandStrengthTester::test(){
 
     hand->getHandWinners(ui->description);
 
-    /*
-    std::vector<Card> cards;
-    cards.push_back(Card(2));
-    cards.push_back(Card(3));
-    cards.push_back(Card(4));
-    cards.push_back(Card(5));
-    cards.push_back(Card(6));
-    cards.push_back(Card(0));
-    cards.push_back(Card(1));
-    std::cout << "Before: \n";
-    std::cout << cards << std::endl;
-    auto ranked_hand = hand->straightFlush(cards);
-    std::cout << "After: \n";
-    std::cout << ranked_hand.hand << std::endl;
-    */
     showAllCards();
     delete hand;
 }
+
+void HandStrengthTester::test_custom(QVector<int> &cards){
+    hand = new Hand(players, nullptr);
+
+    hand->community.flop1.setLabel(ui->card1);
+    hand->community.flop2.setLabel(ui->card2);
+    hand->community.flop3.setLabel(ui->card3);
+    hand->community.turn.setLabel(ui->card4);
+    hand->community.river.setLabel(ui->card5);
+
+    for(auto &player: players){
+        player->card1 = Card(cards.back(), player->card1.img());
+        cards.pop_back();
+
+        player->card2 = Card(cards.back(), player->card2.img());
+        cards.pop_back();
+    }
+
+    hand->community.flop1 = Card(cards.back(), ui->card1);
+    cards.pop_back();
+    hand->community.flop2 = Card(cards.back(), ui->card2);
+    cards.pop_back();
+    hand->community.flop3 = Card(cards.back(), ui->card3);
+    cards.pop_back();
+    hand->community.turn = Card(cards.back(), ui->card4);
+    cards.pop_back();
+    hand->community.river = Card(cards.back(), ui->card5);
+    cards.pop_back();
+
+    std::cout << "---------------------------- New Hand ---------------------------\n";
+
+    for(auto &player: players){
+        Hand::ranked_hand player_hand = hand->best5CardHand(player);
+        QString desc = Hand::toString(player_hand) + "\n";
+
+        for(auto &c: player_hand.hand){
+            desc += QString::number(c.rank()) + " ";
+        }
+        player->label->setText(desc);
+    }
+
+    hand->getHandWinners(ui->description);
+    std::string desc = ui->description->text().toStdString();
+    std::cout << desc << std::endl;
+
+    showAllCards();
+    delete hand;
+}
+

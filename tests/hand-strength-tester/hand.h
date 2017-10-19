@@ -30,18 +30,6 @@ public:
     Hand(QVector<Player*> players, Player* lead_better, int big_blind = 0, int small_blind = 0);
 
     QVector<Player*> current_players;
-    QVector<Player*> folded_players;
-
-    // amount each player can win this hand.
-    // since a hand may have multiple winners, winnings may not be evenly distributed.
-    QMap<Player*, int> player_potential_winnings;
-
-    Player* button;
-    Player* small_blind;
-    Player* big_blind;
-    Player* lead_better;
-    Player* prev_lead_better;
-    Player* current_player;
 
     struct Community {
         Community(int small_blind = 0, int big_blind = 0):
@@ -66,24 +54,14 @@ public:
         Card river;
     } community;
 
-    enum State{PRE_FLOP, FLOP, TURN, RIVER, FINISHED} state;
-
-    bool hasSingleWinner(); //1 player left (1 AND ONLY 1 winner)
-    bool hasRoundFinished(); //end of flop, turn, etc.
-
     std::vector<Card> build7CardHand(Card &c1, Card &c2);
-
     QVector<Player*> getHandWinners(QLabel* label = nullptr);
-
-    void removePlayer(Player* player);
-    void save(); //save hand statistics in database.
 
     enum Type {NONE, HIGH_CARD, PAIR, TWO_PAIR, THREE_KIND, STRAIGHT, FLUSH, FULL_HOUSE, FOUR_KIND, STRAIGHT_FLUSH};
 
-
-
     struct ranked_hand {
         ranked_hand(Hand::Type type, std::vector<Card> hand);
+        ranked_hand();
         bool operator()(const Hand::ranked_hand& a, const Hand::ranked_hand &b) const;
 
         Hand::Type type;
@@ -95,8 +73,9 @@ public:
     static QString toString(Hand::ranked_hand hand);
     static QString toString(std::vector<Card> hand);
     static Hand::ranked_hand emptyHand();
+private:
+    std::vector<Hand::ranked_hand (*)()> hand_types;
 
-    //should be private....
     static bool sort_rank_desc(Card &a, Card &b);
     static bool is_ace_low(Card& a);
 
@@ -113,7 +92,6 @@ public:
     ranked_hand twoPair(std::vector<Card> hand);
     ranked_hand pair(std::vector<Card> hand);
     ranked_hand highCard(std::vector<Card> hand);
-private:
     std::map<Hand::ranked_hand, QVector<Player*>, std::greater<Hand::ranked_hand>> ranks;
 };
 
@@ -123,7 +101,5 @@ bool operator>(const std::vector<Card> &lhs, const std::vector<Card> &rhs);
 bool operator>(const Hand::ranked_hand &lhs, const Hand::ranked_hand &rhs);
 std::ostream& operator<<(std::ostream& out, std::vector<Card> &hand);
 std::ostream& operator<<(std::ostream& out, Hand::ranked_hand &hand);
-
-
 
 #endif // HAND_H

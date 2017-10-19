@@ -1,28 +1,30 @@
-#include "hand.h"
-#include "player.h"
+#include <QLabel>
 #include <algorithm>
 #include <unordered_map>
 #include <map>
 #include <iostream>
-#include <QLabel>
 
-Hand::ranked_hand::ranked_hand(Hand::Type type, std::vector<Card> hand):
-    type(type),
-    hand(hand){}
+#include "hand.h"
+#include "player.h"
 
-bool Hand::ranked_hand::operator()(const Hand::ranked_hand& lhs, const Hand::ranked_hand &rhs) const{
-    if(lhs.type == rhs.type){ //same hand type.
-        return lhs.hand > rhs.hand;
-    }
-    else{
-        return lhs.type > rhs.type;
-    }
+Hand::Hand(QVector<Player*> players, Player* lead_better, int big_blind, int small_blind):
+    current_players(players),
+    community(small_blind, big_blind)
+{
 }
+
+Hand::ranked_hand::ranked_hand(Hand::Type type, std::vector<Card> hand): type(type), hand(hand){}
 
 bool operator>(const Card& lhs, const Card& rhs){
     return lhs.rank() > rhs.rank();
 }
 
+/**********************************************************************
+operator==(std::vector<Card>, std::vector<Card>)
+
+Returns true if lhs is equivalent to rhs by comparing the ranks of each
+card.
+**********************************************************************/
 bool operator==(const std::vector<Card> &lhs, const std::vector<Card> &rhs){
     if(lhs.size() != rhs.size()) return false;
 
@@ -33,6 +35,13 @@ bool operator==(const std::vector<Card> &lhs, const std::vector<Card> &rhs){
     return true;
 }
 
+
+/**********************************************************************
+operator>(std::vector<Card>, std::vector<Card>)
+
+Compares the i'th indices of both hands. Returns turn if lhs card rank
+if higher than rhs card rank.
+**********************************************************************/
 bool operator>(const std::vector<Card> &a, const std::vector<Card> &b){
     for(int i = 0; i < std::min(a.size(), b.size()); i++){
         if(a[i].rank() != b[i].rank()){
@@ -42,7 +51,11 @@ bool operator>(const std::vector<Card> &a, const std::vector<Card> &b){
     return false;
 }
 
+/**********************************************************************
+operator>(Hand::ranked_hand &lhs, Hand::ranked_hand &rhs)
 
+Returns true if lhs is 'stronger' hand than rhs.
+**********************************************************************/
 bool operator>(const Hand::ranked_hand &lhs, const Hand::ranked_hand &rhs){
     if(lhs.type == rhs.type){ //same hand type.
         return lhs.hand > rhs.hand;
@@ -53,7 +66,13 @@ bool operator>(const Hand::ranked_hand &lhs, const Hand::ranked_hand &rhs){
 }
 
 
+/**********************************************************************
+operator==(Hand::ranked_hand &lhs, Hand::Type &rhs)
 
+Returns true if two hands are of the same Hand::Type.
+
+2 2 and 4 4 are different, both they are both hands of type Hand::Pair
+**********************************************************************/
 bool operator==(const Hand::ranked_hand &lhs , const Hand::Type &rhs){
     return lhs.type == rhs;
 }
@@ -89,7 +108,11 @@ std::ostream& operator<<(std::ostream& out, Hand::ranked_hand &hand){
     else out << "Could not validate hand. FUCK.\n";
 }
 
+/**********************************************************************
+Hand::toString(Hand::ranked_hand)
 
+Convert Hand::Type to string using Hand::ranked_hand.
+**********************************************************************/
 QString Hand::toString(Hand::ranked_hand hand){
     if(hand.type == Hand::STRAIGHT_FLUSH) return "Straight flush";
     else if(hand.type == Hand::FOUR_KIND) return "Four kind";
@@ -103,6 +126,11 @@ QString Hand::toString(Hand::ranked_hand hand){
     else return "Unknown";
 }
 
+/**********************************************************************
+Hand::toString(std::vector<Card>)
+
+Output the n-card hand as space delimited ranks.
+**********************************************************************/
 QString Hand::toString(std::vector<Card> hand){
     QString ans;
     for(auto &c: hand){
@@ -111,41 +139,15 @@ QString Hand::toString(std::vector<Card> hand){
     return ans;
 }
 
+/**********************************************************************
+Hand::emptyHand
 
+Return Hand::ranked_hand of type Hand::None to indicate the target
+hand wasn't found. (i.e searching for a full house, but none found)
+**********************************************************************/
 Hand::ranked_hand Hand::emptyHand(){
     return ranked_hand(NONE, std::vector<Card> ());
 }
-
-
-Hand::Hand(QVector<Player*> players, Player* lead_better, int big_blind, int small_blind):
-    current_players(players),
-    lead_better(lead_better),
-    community(small_blind, big_blind)
-{
-    prev_lead_better = nullptr;
-}
-
-bool Hand::hasSingleWinner(){
-    return current_players.size() == 1;
-}
-
-//same person is given the option to bet twice.
-bool Hand::hasRoundFinished(){
-    return prev_lead_better == lead_better;
-}
-
-void Hand::removePlayer(Player *player){
-    auto it = std::find_if(current_players.begin(), current_players.end(), [player](const Player* p){
-        return p == player;
-    });
-
-    current_players.erase(it);
-    folded_players.push_back(player);
-
-    //remove from winnings. no longer eligable.
-    player_potential_winnings.remove(player);
-}
-
 
 /**********************************************************************
 Hand::build7CardHand
@@ -175,11 +177,10 @@ Hand::best5CardHand
 
 Constructs the best possible Hand::ranked_hand for a player.
 
-Uses a greedy approach by checking from strongest to weakest hands.
+Uses a greedy approach by checking from strongest hands first.
 Returns the first match.
 **********************************************************************/
 Hand::ranked_hand Hand::best5CardHand(Player* player){
-    std::cout << "Player: " << player->id << std::endl;
     auto hand = build7CardHand(player->card1, player->card2);
 
     if(straightFlush(hand) == STRAIGHT_FLUSH) return straightFlush(hand);
@@ -190,10 +191,8 @@ Hand::ranked_hand Hand::best5CardHand(Player* player){
     if(threeKind(hand) == THREE_KIND) return threeKind(hand);
     if(twoPair(hand) == TWO_PAIR) return twoPair(hand);
     if(pair(hand) == PAIR) return pair(hand);
-    if(highCard(hand) == HIGH_CARD) return highCard(hand);
 
-    //error
-    return emptyHand();
+    return highCard(hand);
 }
 
 /**********************************************************************
