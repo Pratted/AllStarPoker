@@ -175,7 +175,7 @@ void Client::readPacket(){
                 login_window->hide();
                 menu.show();
                 break;
-            case Packet::Opcode::S2C_NEW_GAME:
+            case Packet::Opcode::S2C_NEW_HAND:
                 game->startNewGameTimer();
                 break;
             case Packet::Opcode::S2C_LOGIN_FAILURE:

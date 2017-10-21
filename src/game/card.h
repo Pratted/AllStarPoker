@@ -1,8 +1,9 @@
 #ifndef CARD_H
 #define CARD_H
 
-#define CARD_WIDTH 44
-#define CARD_HEIGHT 63
+#define ACE_LOW 0
+#define ACE_HIGH 99 // used to construct a high ace when suit is negligable.
+#define ACE_HIGH_RANK 13 //used to change rank to high ace while perserving suit.
 
 struct Card
 {

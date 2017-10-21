@@ -14,9 +14,9 @@ $ hand-str-test                         Use random test cases.
 
 #### Visualize hands through the GUI.
 
-![alt text](https://github.com/Pratted/allstarpoker/tests/three_kind.png "A player wins with 3 of a kind")
+![alt text](https://github.com/Pratted/allstarpoker/blob/master/tests/three_kind.png "A player wins with 3 of a kind")
 
-![alt text](https://github.com/Pratted/allstarpoker/tests/straight.png "Two players have the best hand; straight")
+![alt text](https://github.com/Pratted/allstarpoker/blob/master/tests/straight.png "Two players have the best hand; straight")
 
 #### Test through the command line.
 

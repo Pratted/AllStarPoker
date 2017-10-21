@@ -18,7 +18,7 @@ class Player : public QObject
     Q_OBJECT
     friend class Dealer;
     friend class Client;
-    friend class Game;
+    friend class Hand;
 public:
     explicit Player(int handle, int id, QString name, QObject *parent = 0);
     Player(int seatid, QString name):id(seatid), name(name){}
@@ -39,9 +39,8 @@ public:
     void fold(std::unique_ptr<Hand> &hand);
     void call(std::unique_ptr<Hand> &hand);
     void bet(std::unique_ptr<Hand> &hand, int amount);
-
 private:
-    const int id;
+    int id;
     int handle;
     QString name;
 

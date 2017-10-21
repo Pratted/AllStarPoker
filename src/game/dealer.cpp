@@ -17,6 +17,16 @@
 
 #define TABLE_SIZE 8
 
+
+Dealer::Dealer(Game* game, QObject* parent): game(game), QTcpServer(parent){
+    button = nullptr;
+    small_blind = nullptr;
+    big_blind = nullptr;
+    lead_better = nullptr;
+    prev_lead_better = nullptr;
+    current_player = nullptr;
+}
+
 void Dealer::incomingConnection(qintptr handle){
     game->clients[handle] = new QTcpSocket(this);
     game->clients[handle]->setSocketDescriptor(handle);
@@ -31,8 +41,9 @@ void Dealer::incomingConnection(qintptr handle){
 
     sendExistingPlayers(handle);
 
-    connect(&game->player_timer, &QTimer::timeout, this, &Dealer::forceFold);
+
 }
+
 
 void Dealer::sendExistingPlayers(qintptr handle){
     for(auto &player: game->players){
@@ -94,6 +105,7 @@ void Dealer::seatClient(qintptr handle, JsonString json_str){
     }
 
     Player* player = new Player(handle, seat_id, username);
+    id_to_handle[seat_id] = handle;
 
     //notify all clients (except for this current player) that a player has chosen a seat.
     for(auto &key: clients.keys()){
@@ -118,8 +130,17 @@ void Dealer::seatClient(qintptr handle, JsonString json_str){
 }
 
 void Dealer::prepareGameStart(){
+    for(auto &player: game->players){
+        id_to_player[player->id] = player;
+    }
+
+    connect(&game->player_timer, &QTimer::timeout, this, &Dealer::forceFold);
+    prepareHandStart();
+}
+
+void Dealer::prepareHandStart(){
     for(auto &key: clients.keys()){
-        Packet out(Packet::Opcode::S2C_NEW_GAME);
+        Packet out(Packet::S2C_NEW_HAND);
 
         clients.value(key)->write(out.package());
     }
@@ -154,7 +175,11 @@ void Dealer::forwardChatMessage(Packet& packet){
     messageAll(revised);
 }
 
+/**********************************************************************
+ Dealer::readPacket
 
+ Process the incoming packet and handle accordingly.
+**********************************************************************/
 void Dealer::readPacket(qintptr handle){
 
     qDebug() << "Dealer received a packet from: " << handle;
@@ -169,35 +194,41 @@ void Dealer::readPacket(qintptr handle){
         incoming.unpack();
 
         switch(incoming.opcode){
-            case Packet::Opcode::C2S_KEY:
+            case Packet::C2S_KEY:
                 qDebug() << "We need to authenticate this client.\n";
                 authenticate(handle, incoming.payload);
                 break;
-            case Packet::Opcode::C2S_CHOSE_SEAT:
+            case Packet::C2S_CHOSE_SEAT:
                 qDebug() << "The client has chosen a seat!";
                 seatClient(handle, incoming.payload);
                 break;
-            case Packet::Opcode::C2S_DISCONNECT:
+            case Packet::C2S_DISCONNECT:
                 qDebug() << "The client has left the game.\n";
                 break;
-            case Packet::Opcode::C2S_MESSAGE:
+            case Packet::C2S_MESSAGE:
                 qDebug() << "Dealer: Chat message!";
                 forwardChatMessage(incoming);
                 break;
-            case Packet::Opcode::C2S_PEEK_GAME:
+            case Packet::C2S_PEEK_GAME:
                 qDebug() << "A client is attemping to peek game...\n";
                 //sendSeatedPlayers(handle, incoming.payload.toInt());
                 break;
-            case Packet::Opcode::C2S_PLAYER_MOVE:
+            case Packet::C2S_PLAYER_MOVE:
                 qDebug() << "A client has made a move\n";
 
             default:
-                qDebug() << "Uknown packet type.";
+                qDebug() << "Unknown packet type.";
                 break;
         }
     }
 }
 
+
+/**********************************************************************
+ Dealer::findNextPlayer
+
+ Finds the next player that currently in the hand from current_player.
+**********************************************************************/
 Player* Dealer::findNextPlayer(Player* current_player){
     int seat = current_player->id;
     int id = current_player->id;
@@ -226,39 +257,36 @@ Player* Dealer::findNextPlayer(Player* current_player){
 }
 
 
-Player* Dealer::findPlayerById(int id){
-    auto it = std::find_if(game->players.begin(), game->players.end(), [id](const Player* p){
-        return p->id == id;
-    });
+/**********************************************************************
+ Dealer::forceFold
 
-    return *it;
-}
-
+ Automatically folds for a player when their timer has expired.
+**********************************************************************/
 void Dealer::forceFold(){
     qDebug() << "The current player: " << current_player->id << " has timed out.";
 
-    game->player_timer.blockSignals(true);
-    game->player_timer.stop();
+    int handle = id_to_handle[current_player->id];
+    QString msg = QString::number(Player::FOLD);
 
-    current_player->fold(hand);
     current_player->timeouts++;
 
-    game->player_timer.start(game->timer_duration);
-    game->player_timer.blockSignals(false);
+    readMove(handle, msg, true);
 }
 
-void Dealer::readMove(qintptr handle, QString payload){
-    int id = handle_seats[handle];
-    Player* player = findPlayerById(id);
+/**********************************************************************
+ Dealer::readMove
 
-    game->player_timer.blockSignals(true);
+ Deduce the players move.
+**********************************************************************/
+void Dealer::readMove(qintptr handle, QString payload, bool forced_move){
+    qDebug() << "Reading move...\n";
+    int id = handle_seats[handle];
+    Player* player = id_to_player[id];
+
     game->player_timer.stop(); //stop timer; prevent player from timing out.
 
-    if(player->id != current_player->id){
-        qDebug() << "ERROR LOST TRACK OF CURRENT PLAYER.";
-    }
-
-    player->timeouts = 0;
+    if(!forced_move)
+        player->timeouts = 0;
 
     qDebug() << "Player " << id << " has " << payload << endl;
 
@@ -274,12 +302,14 @@ void Dealer::readMove(qintptr handle, QString payload){
 
     switch (move){
     case Player::FOLD:
+        qDebug() << "Player " << id << " has folded.\n";
         player->fold(hand);
-        messageAll(Packet(Packet::Opcode::C2S_MESSAGE, player->name + " folded."));
+        hand->removePlayer(player);
+        messageAll(Packet(Packet::Opcode::S2C_MESSAGE, player->name + " folded."));
         break;
     case Player::CALL:
         player->call(hand);
-        messageAll(Packet(Packet::Opcode::C2S_MESSAGE, player->name + " called " + formatWithComma(amount_to_call)));
+        messageAll(Packet(Packet::Opcode::S2C_MESSAGE, player->name + " called " + formatWithComma(amount_to_call)));
         break;
     case Player::BET:
         player->bet(hand, amount);
@@ -287,19 +317,87 @@ void Dealer::readMove(qintptr handle, QString payload){
         break;
     }
 
-    if(hand->hasSingleWinner()){
-        //distribute winnings.
-        // prepare next hand.
+    //remove player from game if timed out
+    if(player->timeouts == MAX_CONSECUTIVE_TIMEOUTS){
+        qDebug() << "Player " << id << " has timed out!\n";
     }
 
+    //one winner; everyone else folded.
+    if(hand->hasSingleWinner()){
+        qDebug() << "There is a single winner!\n";
+        game->next_hand_timer.start(DEFAULT_COUNTDOWN);
+        return;
+    }
+
+    //advance to next player.
     current_player = findNextPlayer(player);
 
     if(hand->hasRoundFinished()){
 
     }
+    else{
+        //dealNextRound();
+    }
+}
+
+void Dealer::dealNextRound(){
+    if(hand->state == Hand::PRE_FLOP) dealFlop();
+    if(hand->state == Hand::FLOP) dealTurn();
+    if(hand->state == Hand::TURN) dealRiver();
+
+    hand->state = Hand::State(int(hand->state) + 1);
+}
+
+void Dealer::dealFlop(){
+    hand->community.current_bet = 0;
+
+    hand->community.flop1 = deck.back();
+    deck.pop_back();
+
+    hand->community.flop2 = deck.back();
+    deck.pop_back();
+
+    hand->community.flop3 = deck.back();
+    deck.pop_back();
+
+    current_player = findNextPlayer(button);
+}
+void Dealer::dealTurn(){
+
+}
+void Dealer::dealRiver(){
+
 }
 
 
+/**********************************************************************
+ Dealer::distributeWinnings
+
+ Distribute the winnings to all players after a hand has ended.
+**********************************************************************/
+void Dealer::distributeWinnings(){
+    hand->ranks.clear();
+
+    //find the best hand for each player left
+    for(auto &player: hand->current_players){
+        auto best_hand = hand->best5CardHand(player);
+        hand->ranks[best_hand].push_back(player);
+    }
+
+    //best hand is at begining of Hand::ranks container
+    auto winning_hand = hand->ranks.begin()->first;
+    auto winning_players = hand->ranks[winning_hand];
+
+    for(auto &player: winning_players){
+        player->chips += hand->community.pot / winning_players.size();
+    }
+}
+
+/**********************************************************************
+ Dealer::messageAll
+
+ Forward a packet to all clients.
+**********************************************************************/
 void Dealer::messageAll(Packet outgoing){
     for(auto key: clients.keys()){
         Packet temp(outgoing);
@@ -308,32 +406,28 @@ void Dealer::messageAll(Packet outgoing){
 }
 
 
-//Called once and only once when game starts for the first time.
-//initializes the button pointer.
+/**********************************************************************
+ Dealer::findButton
+
+ Initializes button for first hand of game.
+**********************************************************************/
 Player* Dealer::findButton(){
     return game->players.front();
 }
 
 
-/*
+/**********************************************************************
  * Betting order
  * Button->Small Blind->Big Blind (last).
  *
  * The person to the left (clockwise) of the big blind bets first.
- *
- *
- *
- *
- *
-*/
+**********************************************************************/
 void Dealer::dealNewHand(){
-    game->next_hand_timer.blockSignals(true);
-    game->next_hand_timer.stop();
-    std::cout << "Game: " << game << std::endl;
-    std::cout << "Dealing new hand...";
+    deck = newDeck(); //a new ordered deck.
 
-    this->shuffle();
-    //remove cards from back of deck and give to player.
+    shuffle(deck); //shuffle it.
+
+    //remove cards from back (top) of deck and give to player.
     for(auto &player: game->players){
         std::cout << "Dealing player ";
         std::cout << player->id << std::endl;
@@ -373,7 +467,7 @@ void Dealer::dealNewHand(){
 
     //start timer for current player.
     game->player_timer.start(game->timer_duration);
-    game->player_timer.blockSignals(false);
+    //game->player_timer.blockSignals(false);
 
     //start of hand -> current_player is the lead better.
     current_player = lead_better;
@@ -381,9 +475,12 @@ void Dealer::dealNewHand(){
     hand.reset(new Hand(game->players, lead_better, game->big_blind, game->small_blind));
 }
 
-void Dealer::shuffle(){
-    deck = newDeck();
+/**********************************************************************
+ Dealer::messageAll
 
+ Get a new deck of cards and shuffle it.
+**********************************************************************/
+void Dealer::shuffle(QVector<Card> &deck){
     std::default_random_engine rng(std::random_device{}());
     std::shuffle(deck.begin(), deck.end(), rng);
 }

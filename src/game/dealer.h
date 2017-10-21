@@ -29,7 +29,13 @@ class Dealer : public QTcpServer
 {
     Q_OBJECT
 public:
-    Dealer(Game* game, QObject* parent = 0): game(game), QTcpServer(parent){}
+    Dealer(Game* game, QObject* parent = 0);
+
+    Player* findButton();
+    Player* findNextPlayer(Player* current_player);
+
+    static void shuffle(QVector<Card> &deck);
+    static QVector<Card> newDeck();
 
 public slots:
     void readPacket(qintptr handle); //{ qDebug() << "The dealer has received a packet!\n"; }
@@ -41,25 +47,22 @@ public slots:
     void authenticate(qintptr handle, QString payload);
     void sendExistingPlayers(qintptr handle);
     void forwardChatMessage(Packet& packet);
-    void readMove(qintptr handle, QString payload);
-    void prepareGameStart();
+    void readMove(qintptr handle, QString payload, bool forced_move = false);
+
+    void prepareGameStart(); //new game
+    void prepareHandStart(); //new hand
 
     void dealNewHand();
+    void dealNextRound();
     void forceFold();
 
-    void dealFlop(){}
-    void dealTurn(){}
-    void dealRiver(){}
+    void dealFlop();
+    void dealTurn();
+    void dealRiver();
 
-    void shuffle();
     void clearTable(){}
     void messageAll(Packet packet);
-
-    Player* findButton();
-    Player* findNextPlayer(Player* current_player);
-    Player* findPlayerById(int id);
-
-    static QVector<Card> newDeck();
+    void distributeWinnings();
 signals:
     void clientLeaving(qintptr handle);
 
@@ -69,14 +72,17 @@ private:
     QMap<int, QTcpSocket*> clients;
     QMap<int, int> handle_seats;
 
+    QMap<int, int> id_to_handle;
+    QMap<int, Player*> id_to_player;
+
     Game* game;
     QVector<Card> deck;
     std::unique_ptr<Hand> hand; //unique ptr since 'new' hands will often be dealt.
 
-    Player* button = nullptr;
-    Player* small_blind = nullptr;
-    Player* big_blind = nullptr;
-    Player* lead_better = nullptr;
+    Player* button;
+    Player* small_blind;
+    Player* big_blind;
+    Player* lead_better;
     Player* prev_lead_better;
     Player* current_player;
 };

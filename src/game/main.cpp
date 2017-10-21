@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     QString chip_count = "50000";
     QString small_blind = "0";
     QString big_blind = "0";
-    QString timer = "30";
+    QString timer = "5";
     QString port = "45454";
 
     printf("Starting game...\n");

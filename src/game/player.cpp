@@ -40,7 +40,7 @@ void Player::call(std::unique_ptr<Hand> &hand){
 void Player::fold(std::unique_ptr<Hand> &hand){
     move = Player::FOLD;
 
-    hand->removePlayer(this);
+    //hand->removePlayer(this);
 }
 
 void Player::bet(std::unique_ptr<Hand> &hand, int amount){

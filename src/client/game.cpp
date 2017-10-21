@@ -121,6 +121,7 @@ void Game::startNewGameTimer(){
 }
 
 void Game::countdown(){
+    qDebug() << "Counting down...\n";
     static int seconds_left = 4;
 
     QString msg = "The next round begins in: ";
