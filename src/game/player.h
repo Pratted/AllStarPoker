@@ -6,6 +6,8 @@
 #include <memory>
 
 #include "../globals.h"
+#include "../packet.h"
+
 #include "card.h"
 #include "community.h"
 #include "hand.h"

@@ -27,6 +27,7 @@ public:
         INCOMPLETE,
         S2C_GAME_INFO,
         S2C_ADD_PLAYER,
+        S2C_PLAYER_INFO,
         C2S_CHOSE_SEAT,
         S2C_CARDSDEALT,
         C2S_MESSAGE,
