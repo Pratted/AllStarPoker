@@ -2,7 +2,21 @@
 
 ## About
 
-All Star Poker is a client/server application designed to host poker games. This project divides each component into it's own program and contains source code for each. In addition, each program follows the C++11 standard and uses QT 5 to provide GUI and Networking support. The server portion of All Star Poker has been designed as a fully functional asynchronous, multithreaded tcp server to host up to 10 games.
+All Star Poker is a client/server application designed to host poker games. The project itself has unique 3 applications - game, server and client.
+
+
+## Game
+
+Each game application consists of a dealer hosting a Texas Hold'em style game thats runs on its on unique port and acts as a TCP server for all of the players in the game (playing or spectating). Players can connect directly to a game if they know the host, port and password (if requested).
+
+## Server
+
+Server works alongside game and they have a master-slave relationship. Each server can spawn however many games are specified in the settings file. When players wish to play allstarpoker they'll typically connect to the master server which then shows all the games available to join. From there the server will send a signal to that games dealer notifying them of the incoming connection. 
+
+## Client
+
+The client application lets players make decisions through a modern GUI. It displays timers, chip counts and has a chat box for all players to talk to one another. The client is designed to interact with both the server and game.
+
 
 ## Installation and Building
 
@@ -19,7 +33,6 @@ This will create the executable which can be called as such:
 
 ` $ ./ASPServer`
 
-Note that the server component of All Star Poker has no GUI. It's specifically designed as a command line application so it can be hosted on a VPS and run in the background. 
 
 ## Features
 * Host up to 10 games on each instance of the server.
